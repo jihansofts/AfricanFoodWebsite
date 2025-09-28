@@ -11,6 +11,7 @@ const dmSans = DM_Sans({
 
 const inter = Inter({
   variable: "--font-Inter",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -29,7 +30,7 @@ export default function RootLayout({
       <body className={`${dmSans.variable} ${inter.variable} antialiased`}>
         <Navbar />
         {children}
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );
