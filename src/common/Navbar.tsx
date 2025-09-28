@@ -58,8 +58,8 @@ export default function Navbar(): React.ReactElement {
   };
 
   return (
-    <nav className="bg-background shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-background py-4 z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
           <motion.div
@@ -157,7 +157,6 @@ export default function Navbar(): React.ReactElement {
           </motion.button>
         </div>
 
-        {/* Mobile Navigation */}
         {/* Mobile Navigation */}
         <AnimatePresence>
           {isMobileMenuOpen && (
