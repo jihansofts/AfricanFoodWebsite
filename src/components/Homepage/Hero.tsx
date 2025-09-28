@@ -6,9 +6,9 @@ export default function Hero() {
   return (
     <section className="bg-background">
       {/* Background Image */}
-      <div className="container  relative mx-auto rounded-2xl overflow-hidden">
+      <div className=" container  relative mx-auto rounded-2xl overflow-hidden px-4">
         {/* ✅ Give the wrapper a height */}
-        <div className="relative w-full min-h-[600px] bg-black/100 rounded-2xl px-4 sm:px-6 lg:px-4 ">
+        <div className=" mx-auto relative w-full min-h-[600px] bg-black/100 rounded-2xl  ">
           <Image
             src="/images/foodhero.png"
             alt="Hero"
