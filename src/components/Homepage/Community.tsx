@@ -43,8 +43,8 @@ export default function Community() {
           {data.map((item, index) => (
             <div
               key={index}
-              className="bg-white p-6  sm:p-8 md:p-6 flex flex-col items-center text-center 
-                 w-full h-full rounded-2xl border border-gray-200">
+              className="bg-white px-7 py-8 lg:min-h-[510px] flex flex-col items-center text-center 
+                     w-full h-full rounded-2xl border border-gray-200">
               {/* Image Wrapper */}
               <div className="bg-[#FFDBCC] rounded-full p-4 flex items-center justify-center mb-6">
                 <Image
@@ -56,23 +56,23 @@ export default function Community() {
                 />
               </div>
 
-              {/* Content Wrapper (flex-grow keeps button pushed to bottom) */}
-              <div className="flex flex-col flex-grow items-center">
+              {/* Content Wrapper */}
+              <div className="flex flex-col flex-grow items-center w-full">
                 <h2 className="md:text-[40px] sm:text-[32px] text-[24px] font-sans font-bold text-text mb-2">
                   {item.title}
                 </h2>
 
-                <p className="text-[16px] text-text font-normal font-inter mb-4">
+                <p className="text-[16px] text-text font-normal font-inter mb-4 leading-relaxed">
                   {item.desc}
                 </p>
 
-                {/* Button always aligned bottom */}
-                <div className="mt-auto">
+                {/* Button Section */}
+                <div className="mt-auto pt-4">
                   <Link href="/signup">
                     <button
                       className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
-                               transition-all duration-200 text-background font-semibold 
-                               hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                           transition-all duration-200 text-background font-semibold 
+                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
                       {item.btn}
                     </button>
                   </Link>
