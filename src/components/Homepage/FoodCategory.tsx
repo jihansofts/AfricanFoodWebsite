@@ -12,11 +12,11 @@ export default function FoodCategory() {
             Explore <span className="text-primary">African</span> Heritage
           </h1>
           <div className="flex items-center space-x-4">
-            <button className="arrow-button">
+            <button title="button" className="arrow-button">
               <IoIosArrowBack className="size-5" />
             </button>
             <span className="text-text text-base font-bold">1 / 2</span>
-            <button className="arrow-button">
+            <button title="button" className="arrow-button">
               <IoIosArrowForward className="size-5 " />
             </button>
           </div>
