@@ -1,4 +1,5 @@
 import Community from "@/components/Homepage/Community";
+import FoodCategory from "@/components/Homepage/FoodCategory";
 import Hero from "@/components/Homepage/Hero";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <main>
       <Hero />
       <Community />
+      <FoodCategory />
     </main>
   );
 }
