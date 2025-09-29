@@ -1,9 +1,15 @@
 "use client";
-import React from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { IoIosLink, IoMdHeartEmpty } from "react-icons/io";
+import {
+  IoIosLink,
+  IoMdHeartEmpty,
+  IoIosArrowBack,
+  IoIosArrowForward,
+} from "react-icons/io";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 
 // Import Swiper styles
 import "swiper/css";
@@ -46,8 +52,12 @@ const data: TopVendorsProps[] = [
 ];
 
 export default function TopVendors() {
+  const swiperRef = useRef<SwiperType | null>(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+
   return (
-    <section className="relative overflow-hidden py-16">
+    <section className="relative h-auto overflow-hidden py-16">
       {/* Background Image */}
       <Image
         src="/images/bgvendors.png"
@@ -58,7 +68,7 @@ export default function TopVendors() {
       />
 
       {/* Content */}
-      <div className="relative mx-auto max-w-6xl h-full flex flex-col justify-center items-center text-center px-6">
+      <div className=" mx-auto max-w-6xl h-full flex flex-col justify-center items-center text-center px-6">
         {/* Title */}
         <h2 className="lg:text-[56px] md:text-[48px] text-[32px] font-sans font-bold text-white">
           <span className="text-primary">Top Rated</span> Vendors
@@ -67,20 +77,26 @@ export default function TopVendors() {
         {/* Slider */}
         <Swiper
           modules={[Navigation]}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            setIsBeginning(swiper.isBeginning);
+            setIsEnd(swiper.isEnd);
+          }}
+          onSlideChange={(swiper) => {
+            setIsBeginning(swiper.isBeginning);
+            setIsEnd(swiper.isEnd);
+          }}
           spaceBetween={20}
           slidesPerView={1}
-          navigation={{
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          }}
+          loop={false} // ✅ disable looping so beginning/end detection works
           breakpoints={{
             768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
+            1024: { slidesPerView: 2 },
           }}
           className="mt-10 w-full">
           {data.map((item) => (
             <SwiperSlide key={item.id}>
-              <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
+              <div className="bg-white p-10 rounded-2xl overflow-hidden shadow-lg">
                 {/* Vendor Image */}
                 <Image
                   src={item.image}
@@ -91,23 +107,25 @@ export default function TopVendors() {
                 />
 
                 {/* Bottom Section */}
-                <div className="p-4 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-center gap-3">
                     <Image
                       src={item.logo}
                       alt="Vendor Logo"
                       width={40}
                       height={40}
-                      className="w-10 h-10 object-contain"
+                      className="w-10 h-10 flex object-contain"
                     />
-                    <h5 className="text-lg font-semibold">{item.title}</h5>
+                    <h5 className="text-[40px] font-sans text-text font-semibold">
+                      {item.title}
+                    </h5>
                   </div>
 
-                  <div className="flex gap-2 text-xl text-primary">
-                    <button className="p-2 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition">
+                  <div className="flex gap-2 text-xl text-white">
+                    <button className="p-2 cursor-pointer rounded-full bg-text hover:bg-primary hover:text-white transition">
                       {item.icon1}
                     </button>
-                    <button className="p-2 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition">
+                    <button className="p-2 rounded-full cursor-pointer bg-primary hover:bg-text hover:text-white transition">
                       {item.icon2}
                     </button>
                   </div>
@@ -117,9 +135,37 @@ export default function TopVendors() {
           ))}
         </Swiper>
 
-        {/* Navigation Arrows */}
-        <div className="swiper-button-prev absolute left-2 top-1/2 -translate-y-1/2 text-orange-500 text-3xl cursor-pointer z-10" />
-        <div className="swiper-button-next absolute right-2 top-1/2 -translate-y-1/2 text-orange-500 text-3xl cursor-pointer z-10" />
+        {/* Custom Navigation Arrows */}
+        {/* Left Arrow */}
+        {/* Left Arrow */}
+        <button
+          title="Previous"
+          onClick={() => swiperRef.current?.slidePrev()}
+          disabled={isBeginning}
+          className={`group cursor-pointer absolute left-30 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
+    ${
+      isBeginning
+        ? "bg-transparent text-primary border border-primary cursor-not-allowed"
+        : "bg-orange-500 text-white hover:bg-white hover:text-orange-500"
+    }
+  `}>
+          <IoIosArrowBack size={20} />
+        </button>
+
+        {/* Right Arrow */}
+        <button
+          title="Next"
+          onClick={() => swiperRef.current?.slideNext()}
+          disabled={isEnd}
+          className={`group cursor-pointer absolute right-30 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
+    ${
+      isEnd
+        ? "bg-transparent text-primary border border-primary cursor-not-allowed"
+        : "bg-orange-500 text-white hover:bg-white hover:text-orange-500"
+    }
+  `}>
+          <IoIosArrowForward size={20} />
+        </button>
       </div>
     </section>
   );

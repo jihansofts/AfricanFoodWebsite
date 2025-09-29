@@ -38,7 +38,7 @@ export default function FoodCard({ datas }: FoodCardProps) {
       {datas.map((item) => (
         <div
           key={item.id}
-          className="bg-[#F7F7F7] rounded-2xl px-6 py-3 transition-all duration-300 flex flex-col items-center justify-center"
+          className="bg-[#F7F7F7] rounded-2xl px-6 py-8 transition-all duration-300 flex flex-col items-center justify-center"
         >
           <div className="w-[383px] h-[256px] relative">
             <Image
@@ -46,7 +46,7 @@ export default function FoodCard({ datas }: FoodCardProps) {
               height={256}
               src={item.image}
               alt={item.title}
-              className="w-full h-full object-cover rounded-md mb-3"
+              className="w-full h-full object-cover rounded-2xl mb-3"
             />
             <span className="absolute top-4 right-4 bg-white text-gray-950 font-inter px-3 py-2 rounded-full text-base">
               100+ Dishes
