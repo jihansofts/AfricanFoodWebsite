@@ -19,14 +19,14 @@ const data: CommunityProps[] = [
   },
   {
     id: 2,
-    image: "/images/community1.png",
+    image: "/images/community2.png",
     title: "List On Our Platform",
     desc: "Become a Merchant and share your authentic African dishes with the world.",
     btn: "List Your Items",
   },
   {
     id: 3,
-    image: "/images/community1.png",
+    image: "/images/community2.png",
     title: "Start Delivering",
     desc: "Become a Delivery Partner and bring Africa’s flavors to more homes.",
     btn: "Start Delivering",
