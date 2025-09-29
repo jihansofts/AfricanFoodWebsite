@@ -15,13 +15,19 @@ export default function FoodCard({ datas }: FoodCardProps) {
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={`full-${i}`} className="text-yellow-500 size-[25px]" />);
+      stars.push(
+        <FaStar key={`full-${i}`} className="text-[#FFA319] size-[25px]" />
+      );
     }
     if (halfStar) {
-      stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 size-[25px]" />);
+      stars.push(
+        <FaStarHalfAlt key="half" className="text-[#FFA319] size-[25px]" />
+      );
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-500 size-[25px]" />);
+      stars.push(
+        <FaRegStar key={`empty-${i}`} className="text-[#FFA319] size-[25px]" />
+      );
     }
 
     return stars;
