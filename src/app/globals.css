@@ -14,6 +14,18 @@
   --font-inter: var(--font-Inter);
 }
 
+@layer components {
+  .arrow-button {
+    @apply bg-white border border-gray-300 rounded-full p-3 hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer;
+  }
+  .view-all-button {
+    @apply py-2 px-6 rounded-full bg-primary text-[#fffefd] hover:bg-transparent hover:border border-primary hover:text-[#222222] cursor-pointer;
+  }
+  .title-text {
+    @apply text-text text-[32px] md:text-[44px] lg:text-[56px] font-semibold font-sans;
+  }
+}
+
 body {
   background: var(--background);
   font-family: var(--font-inter);

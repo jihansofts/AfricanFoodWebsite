@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <section className="bg-background">
       {/* Background Image */}
-      <div className=" container  relative mx-auto rounded-2xl overflow-hidden px-4">
+      <div className="container  relative mx-auto rounded-2xl overflow-hidden">
         {/* ✅ Give the wrapper a height */}
         <div className=" mx-auto relative w-full min-h-[600px] bg-black/100 rounded-2xl  ">
           <Image
