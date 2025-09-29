@@ -33,6 +33,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                   : "h-[490px] group-hover:absolute group-hover:inset-0 group-hover:h-full group-hover:w-full group-hover:rounded-lg px-4 py-1 group-hover:px-0 group-hover:py-0"
               }`}>
               <Image
+              
                 fill
                 src={item.image}
                 alt={item.title}
