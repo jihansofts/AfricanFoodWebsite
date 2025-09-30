@@ -1,3 +1,4 @@
+import ClientTestimonial from "@/components/Homepage/ClientTestimonial";
 import Community from "@/components/Homepage/Community";
 import FoodCategory from "@/components/Homepage/FoodCategory";
 import Hero from "@/components/Homepage/Hero";
@@ -10,6 +11,7 @@ export default function Home() {
       <Community />
       <FoodCategory />
       <TopVendors />
+      <ClientTestimonial />
     </main>
   );
 }

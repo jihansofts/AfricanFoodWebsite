@@ -14,7 +14,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
 
   return (
     <>
-      <div className="flex items-center justify-center gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-6">
         {datas.map((item, index) => (
           <div
             key={index}
