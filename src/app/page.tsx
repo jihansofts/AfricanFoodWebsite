@@ -12,6 +12,8 @@ export default function Home() {
       <Community />
       <FoodCategory />
       <TopVendors />
+      <WhyChooseUs />
+      <ClientTestimonial />
     </main>
   );
 }
