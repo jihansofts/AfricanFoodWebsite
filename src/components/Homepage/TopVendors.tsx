@@ -142,7 +142,7 @@ export default function TopVendors() {
           title="Previous"
           onClick={() => swiperRef.current?.slidePrev()}
           disabled={isBeginning}
-          className={`group cursor-pointer absolute left-30 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
+          className={`group cursor-pointer absolute left-[5%] top-3/5 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
     ${
       isBeginning
         ? "bg-transparent text-primary border border-primary cursor-not-allowed"
@@ -157,7 +157,7 @@ export default function TopVendors() {
           title="Next"
           onClick={() => swiperRef.current?.slideNext()}
           disabled={isEnd}
-          className={`group cursor-pointer absolute right-30 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
+          className={`group cursor-pointer absolute right-[5%] top-3/5 -translate-y-1/2 p-3 rounded-full shadow-lg transition z-10
     ${
       isEnd
         ? "bg-transparent text-primary border border-primary cursor-not-allowed"

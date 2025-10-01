@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,7 +45,8 @@ export default function Community() {
             <div
               key={index}
               className="bg-white px-7 py-8 lg:min-h-[510px] flex flex-col items-center text-center 
-                     w-full h-full rounded-2xl border border-gray-200">
+                     w-full h-full rounded-2xl border border-gray-200"
+            >
               {/* Image Wrapper */}
               <div className="bg-[#FFDBCC] rounded-full p-4 flex items-center justify-center mb-6">
                 <Image
@@ -72,7 +74,8 @@ export default function Community() {
                     <button
                       className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
                            transition-all duration-200 text-background font-semibold 
-                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer"
+                    >
                       {item.btn}
                     </button>
                   </Link>

@@ -14,14 +14,15 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
 
   return (
     <>
-      <div className="flex items-start gap-6">
+      <div className="flex items-center justify-center gap-6">
         {datas.map((item, index) => (
           <div
             key={index}
             onClick={() => setSelectedCategory(item)}
-            className="relative w-[430px] h-[600px] rounded-lg bg-[#F7F7F7] cursor-pointer group  overflow-hidden">
+            className="relative w-full h-[600px] rounded-3xl bg-[#F7F7F7] cursor-pointer group overflow-hidden"
+          >
             {selectedCategory.id !== item.id && (
-              <h2 className="text-[24px] md:text-[28px] lg:text-[32px] font-semibold text-text mb-2 transition-all duration-500 group-hover:opacity-0 relative z-10 px-4 py-1 group-hover:px-0 group-hover:py-0">
+              <h2 className="text-[24px] md:text-[28px] lg:text-[32px] font-semibold text-text mb-2 transition-all duration-500 group-hover:opacity-0 relative z-10 mx-4 my-2 group-hover:mx-0 group-hover:my-0">
                 {item.title}
               </h2>
             )}
@@ -29,15 +30,15 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
             <div
               className={`rounded-md overflow-hidden relative transition-all duration-500 ${
                 selectedCategory.id === item.id
-                  ? "absolute inset-0 h-full w-full rounded-lg"
-                  : "h-[490px] group-hover:absolute group-hover:inset-0 group-hover:h-full group-hover:w-full group-hover:rounded-lg px-4 py-1 group-hover:px-0 group-hover:py-0"
-              }`}>
+                  ? "absolute inset-0 h-full w-full rounded-3xl"
+                  : "h-[490px] group-hover:absolute group-hover:inset-0 group-hover:h-full group-hover:w-full group-hover:rounded-lg mx-4 my-2 group-hover:mx-0 group-hover:my-0"
+              }`}
+            >
               <Image
-              
                 fill
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover transition-all duration-500 rounded-lg"
+                className="w-full h-full object-cover transition-all duration-500 rounded-3xl"
               />
 
               <div
@@ -45,14 +46,16 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                   selectedCategory.id === item.id
                     ? "opacity-100"
                     : "opacity-0 group-hover:opacity-100"
-                }`}></div>
+                }`}
+              ></div>
 
               <div
                 className={`absolute top-6 left-6 right-6 z-20 transition-all duration-500 delay-100 ${
                   selectedCategory.id === item.id
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0"
-                }`}>
+                }`}
+              >
                 <h3 className="text-white text-[24px] md:text-[28px] lg:text-[32px] font-semibold">
                   {item.title}
                 </h3>
@@ -62,13 +65,20 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
               </div>
 
               <span
-                className={`absolute bottom-6 left-6 z-20 bg-[#FFFEFD] text-[#222222] text-sm font-normal px-3 py-1 rounded-full transition-all duration-500 delay-200 ${
+                className={`absolute bottom-24 left-6 z-20 bg-[#FFFEFD] text-[#222222] text-sm font-normal px-3 py-1 rounded-full transition-all duration-500 delay-200 font-inter ${
                   selectedCategory.id === item.id
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0"
-                }`}>
+                }`}
+              >
                 {item.batch}
               </span>
+
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 w-11/12">
+                <button className="w-full bg-primary text-white py-3 font-medium rounded-lg hover:bg-primary/90 transition-colors duration-300 font-inter">
+                  See All Dishes
+                </button>
+              </div>
             </div>
           </div>
         ))}
