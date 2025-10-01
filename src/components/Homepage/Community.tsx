@@ -8,6 +8,7 @@ interface CommunityProps {
   title: string;
   desc: string;
   btn: string;
+  link: string;
 }
 
 const data: CommunityProps[] = [
@@ -17,6 +18,7 @@ const data: CommunityProps[] = [
     title: "Join Our Platform",
     desc: "Join us to share authentic African flavors, connect with food lovers, and grow your culinary journey.",
     btn: "Sign Up Now",
+    link: "/joinplatform",
   },
   {
     id: 2,
@@ -24,6 +26,7 @@ const data: CommunityProps[] = [
     title: "List On Our Platform",
     desc: "Become a Merchant and share your authentic African dishes with the world.",
     btn: "List Your Items",
+    link: "#",
   },
   {
     id: 3,
@@ -31,6 +34,7 @@ const data: CommunityProps[] = [
     title: "Start Delivering",
     desc: "Become a Delivery Partner and bring Africa’s flavors to more homes.",
     btn: "Start Delivering",
+    link: "#",
   },
 ];
 export default function Community() {
@@ -45,8 +49,7 @@ export default function Community() {
             <div
               key={index}
               className="bg-white px-7 py-8 lg:min-h-[510px] flex flex-col items-center text-center 
-                     w-full h-full rounded-2xl border border-gray-200"
-            >
+                     w-full h-full rounded-2xl border border-gray-200">
               {/* Image Wrapper */}
               <div className="bg-[#FFDBCC] rounded-full p-4 flex items-center justify-center mb-6">
                 <Image
@@ -70,12 +73,11 @@ export default function Community() {
 
                 {/* Button Section */}
                 <div className="mt-auto pt-4">
-                  <Link href="/signup">
+                  <Link href={item.link}>
                     <button
                       className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
                            transition-all duration-200 text-background font-semibold 
-                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer"
-                    >
+                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
                       {item.btn}
                     </button>
                   </Link>
