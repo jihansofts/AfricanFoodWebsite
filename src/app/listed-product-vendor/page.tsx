@@ -114,7 +114,7 @@ export default function ProductPage() {
         <div className="flex justify-center gap-10 mb-8 bg-[#F5F5F5] py-3">
           <button
             onClick={() => setActiveTab("list")}
-            className={`pb-3 text-2xl font-semibold ${
+            className={`pb-3 lg:text-2xl md:text-[18px] text-[16px] font-semibold ${
               activeTab === "list"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
@@ -123,7 +123,7 @@ export default function ProductPage() {
           </button>
           <button
             onClick={() => setActiveTab("listed")}
-            className={`pb-3 text-2xl font-semibold ${
+            className={`pb-3 lg:text-2xl md:text-[18px] text-[16px] font-semibold ${
               activeTab === "listed"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
@@ -232,14 +232,14 @@ export default function ProductPage() {
                 </h3>
 
                 <div className="w-full flex items-center justify-center gap-4 mt-4">
-                  <span className="text-primary text-[28px] font-bold font-sans">
+                  <span className="text-primary lg:text-[28px] md:text-[22px] text-[16px] font-bold font-sans">
                     {product.price.toFixed(2)} CAD
                   </span>
                   <div className="flex items-center gap-2">
-                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
                       Edit
                     </button>
-                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
                       Delete
                     </button>
                   </div>
