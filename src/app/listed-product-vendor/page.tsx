@@ -63,10 +63,17 @@ export default function ProductPage() {
 
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.price) return;
-    setProducts([
-      ...products,
-      { ...newProduct, id: Date.now(), image: "/placeholder.jpg" },
-    ]);
+
+    const productToAdd: Product = {
+      id: Date.now(),
+      title: newProduct.name,
+      price: newProduct.price,
+      image: "/placeholder.jpg",
+      rating: 0,
+    };
+
+    setProducts([...products, productToAdd]);
+
     setNewProduct({
       id: 0,
       name: "",
