@@ -5,6 +5,11 @@
   --primary: #ff5913;
   --textColor: #222222;
 }
+* {
+  scroll-behavior: smooth;
+  --webkit-scroll-behavior: smooth;
+  --moz-scroll-behavior: smooth;
+}
 
 @theme inline {
   --color-background: var(--background);

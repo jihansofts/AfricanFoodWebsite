@@ -57,7 +57,7 @@ export default function TopVendors() {
   const [isEnd, setIsEnd] = useState(false);
 
   return (
-    <section className="relative h-auto overflow-hidden py-16">
+    <section id="vendors" className="relative h-auto overflow-hidden py-16">
       {/* Background Image */}
       <Image
         src="/images/bgvendors.png"

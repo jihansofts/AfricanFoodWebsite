@@ -45,7 +45,7 @@ export default function RegisterPage() {
               {["customer", "vendor", "rider"].map((type) => (
                 <label
                   key={type}
-                  className="flex items-center gap-2 cursor-pointer">
+                  className="flex  items-center gap-2 cursor-pointer">
                   {/* Hidden Radio */}
                   <input
                     type="radio"
@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
                   {/* Custom Box */}
                   <span
-                    className={`w-[17px] h-[16px] flex items-center justify-center rounded-sm border transition-all
+                    className={`w-[17px] h-[16px]  flex items-center justify-center rounded-sm border transition-all
           ${
             accountType === type
               ? "bg-primary border-primary text-white"

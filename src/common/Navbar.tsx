@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import Link from "next/link";
 
 type NavItem = {
   id: string;
@@ -67,9 +68,11 @@ export default function Navbar(): React.ReactElement {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}>
-            <h1 className="text-primary text-[42px] font-bold font-sans">
-              AfroEats
-            </h1>
+            <Link href="/">
+              <h1 className="text-primary text-[42px] font-bold font-sans">
+                AfroEats
+              </h1>
+            </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -83,9 +86,9 @@ export default function Navbar(): React.ReactElement {
                 key={item.id}
                 variants={itemVariants}
                 className="relative">
-                <button
-                  onClick={() => handleLinkClick(item.id)}
-                  className={`px-4 py-2 text-[16px] font-inter rounded-md transition-all duration-200 ${
+                <Link
+                  href={`#${item.id}`}
+                  className={`px-4 py-2 block text-[16px] font-inter rounded-md transition-all duration-200 ${
                     activeLink === item.id
                       ? "text-primary font-bold font-inter"
                       : "text-text font-normal hover:text-primary cursor-pointer"
@@ -102,22 +105,26 @@ export default function Navbar(): React.ReactElement {
                       }}
                     />
                   )}
-                </button>
+                </Link>
               </motion.div>
             ))}
           </motion.div>
           <div className="hidden md:flex items-center space-x-4">
-            <button className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+            <Link
+              href="#"
+              className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
               Login
-            </button>
-            <button className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary  hover:text-background cursor-pointer">
+            </Link>
+            <Link
+              href="/join-platform"
+              className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary  hover:text-background cursor-pointer">
               Sign Up
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <motion.button
-            className="md:hidden p-2 rounded-md text-text hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
+            className="md:hidden cursor-pointer p-2 rounded-md text-text hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
             aria-label="Toggle menu"
@@ -168,29 +175,31 @@ export default function Navbar(): React.ReactElement {
               variants={mobileMenuVariants}>
               <div className="px-2 pt-2 pb-4 space-y-1 bg-background">
                 {navItems.map((item) => (
-                  <motion.button
+                  <Link
                     key={item.id}
-                    onClick={() => handleLinkClick(item.id)}
+                    href={`#${item.id}`}
                     className={`block w-full text-left px-3 py-3 rounded-md text-[16px] font-inter transition-all duration-200 ${
                       activeLink === item.id
                         ? "text-primary font-bold  border-l-4 border-primary"
                         : "text-text font-normal hover:text-primary"
                     }`}
-                    whileHover={{ x: 8 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ type: "spring", stiffness: 400 }}>
+                    onClick={() => setIsMobileMenuOpen(false)}>
                     {item.label}
-                  </motion.button>
+                  </Link>
                 ))}
 
                 {/* ✅ Mobile Auth Buttons */}
                 <div className="mt-4 flex flex-col gap-3 px-3">
-                  <button className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                  <Link
+                    href="#"
+                    className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
                     Login
-                  </button>
-                  <button className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary hover:text-background cursor-pointer">
+                  </Link>
+                  <Link
+                    href="/join-platform"
+                    className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary hover:text-background cursor-pointer">
                     Sign Up
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>

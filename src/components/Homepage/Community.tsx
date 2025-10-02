@@ -18,7 +18,7 @@ const data: CommunityProps[] = [
     title: "Join Our Platform",
     desc: "Join us to share authentic African flavors, connect with food lovers, and grow your culinary journey.",
     btn: "Sign Up Now",
-    link: "/joinplatform",
+    link: "/join-platform",
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const data: CommunityProps[] = [
     title: "List On Our Platform",
     desc: "Become a Merchant and share your authentic African dishes with the world.",
     btn: "List Your Items",
-    link: "#",
+    link: "/list-our-platform",
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ const data: CommunityProps[] = [
     title: "Start Delivering",
     desc: "Become a Delivery Partner and bring Africa’s flavors to more homes.",
     btn: "Start Delivering",
-    link: "#",
+    link: "/start-delivering",
   },
 ];
 export default function Community() {
