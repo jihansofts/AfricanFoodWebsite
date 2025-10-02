@@ -7,8 +7,8 @@ export default function Footer() {
       <div className="container mx-auto bg-text px-8 py-8 rounded-xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-5 flex flex-col space-y-4">
-            <h1 className="font-sans text-6xl font-bold text-primary">
-              AfroEats
+            <h1 className="font-sans lg:text-6xl md:text-4xl text-3xl font-bold text-primary">
+              AfricanFoodZones
             </h1>
             <p className="text-gray-300 font-inter max-w-lg text-base md:text-xl">
               Join us now and embark on a culinary journey to explore, create,

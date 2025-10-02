@@ -81,8 +81,7 @@ export default function FoodCard({
               isPrevDisabled
                 ? "opacity-50 cursor-not-allowed border-primary text-primary"
                 : "cursor-pointer border-primary text-white bg-primary hover:text-white"
-            }`}
-          >
+            }`}>
             <IoIosArrowBack className="size-5" />
           </button>
 
@@ -98,8 +97,7 @@ export default function FoodCard({
               isNextDisabled
                 ? "opacity-50 cursor-not-allowed border-primary text-primary"
                 : "cursor-pointer border-primary text-white bg-primary hover:text-white"
-            }`}
-          >
+            }`}>
             <IoIosArrowForward className="size-5" />
           </button>
         </div>
@@ -113,13 +111,11 @@ export default function FoodCard({
               ? "-translate-x-4 opacity-0"
               : "translate-x-0 opacity-100"
           }`}
-          onTransitionEnd={() => setSlideDirection("none")}
-        >
+          onTransitionEnd={() => setSlideDirection("none")}>
           {currentDatas.map((item) => (
             <div
               key={item.id}
-              className="bg-[#F7F7F7] rounded-2xl px-6 py-8 flex flex-col items-center justify-center"
-            >
+              className="bg-[#F7F7F7] rounded-2xl px-6 py-8 flex flex-col items-center justify-center">
               <div className="w-[350px] h-[230px] relative">
                 <Image
                   width={350}
@@ -142,10 +138,10 @@ export default function FoodCard({
               </h3>
 
               <div className="w-full flex items-center justify-center gap-4 mt-4">
-                <span className="text-primary text-[28px] font-bold font-sans">
+                <span className="text-primary lg:text-[28px] md:text-[24px] text-[20px] font-bold font-sans">
                   {item.price.toFixed(2)} CAD
                 </span>
-                <button className="py-4 px-8 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                <button className="lg:py-4 md:py-3 py-2 lg:px-8 md:px-6 px-4 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
                   Add To Cart
                 </button>
               </div>

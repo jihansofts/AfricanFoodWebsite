@@ -69,8 +69,8 @@ export default function Navbar(): React.ReactElement {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}>
             <Link href="/">
-              <h1 className="text-primary text-[42px] font-bold font-sans">
-                AfroEats
+              <h1 className="text-primary lg:text-[42px] md:text-[32px] text-[24px] font-bold font-sans">
+                AfricanFoodZones
               </h1>
             </Link>
           </motion.div>
