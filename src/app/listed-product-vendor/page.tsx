@@ -228,13 +228,18 @@ export default function ProductPage() {
                   {product.title}
                 </h3>
 
-                <div className="w-full flex items-center justify-between mt-4">
+                <div className="w-full flex items-center justify-center gap-4 mt-4">
                   <span className="text-primary text-[28px] font-bold font-sans">
                     {product.price.toFixed(2)} CAD
                   </span>
-                  <button className="py-2 px-4 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
-                    Add To Cart
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                      Edit
+                    </button>
+                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

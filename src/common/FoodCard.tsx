@@ -141,11 +141,11 @@ export default function FoodCard({
                 {item.title}
               </h3>
 
-              <div className="w-full flex items-center justify-between mt-4">
+              <div className="w-full flex items-center justify-center gap-4 mt-4">
                 <span className="text-primary text-[28px] font-bold font-sans">
                   {item.price.toFixed(2)} CAD
                 </span>
-                <button className="py-2 px-4 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                <button className="py-4 px-8 border-2 border-primary font-semibold text-primary rounded-full text-[16px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
                   Add To Cart
                 </button>
               </div>
