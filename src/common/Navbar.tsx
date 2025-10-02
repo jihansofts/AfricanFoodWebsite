@@ -7,6 +7,7 @@ import Link from "next/link";
 type NavItem = {
   id: string;
   label: string;
+  href?: string;
 };
 
 export default function Navbar(): React.ReactElement {
@@ -14,7 +15,7 @@ export default function Navbar(): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const navItems: NavItem[] = [
-    { id: "home", label: "HOME" },
+    { id: "home", label: "HOME", href: "/" },
     { id: "recipes", label: "RECIPES" },
     { id: "vendors", label: "TOP VENDORS" },
     { id: "community", label: "COMMUNITY" },
@@ -87,7 +88,7 @@ export default function Navbar(): React.ReactElement {
                 variants={itemVariants}
                 className="relative">
                 <Link
-                  href={`#${item.id}`}
+                  href={item.href || `#${item.id}`}
                   className={`px-4 py-2 block text-[16px] font-inter rounded-md transition-all duration-200 ${
                     activeLink === item.id
                       ? "text-primary font-bold font-inter"
@@ -177,7 +178,7 @@ export default function Navbar(): React.ReactElement {
                 {navItems.map((item) => (
                   <Link
                     key={item.id}
-                    href={`#${item.id}`}
+                    href={item.href || `#${item.id}`}
                     className={`block w-full text-left px-3 py-3 rounded-md text-[16px] font-inter transition-all duration-200 ${
                       activeLink === item.id
                         ? "text-primary font-bold  border-l-4 border-primary"
