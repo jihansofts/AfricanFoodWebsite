@@ -70,7 +70,7 @@ export default function Navbar(): React.ReactElement {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}>
             <Link href="/">
-              <h1 className="text-primary lg:text-[42px] md:text-[32px] text-[24px] font-bold font-sans">
+              <h1 className="text-primary lg:text-[30px] md:text-[32px] text-[24px] font-bold font-sans">
                 AfricanFoodZones
               </h1>
             </Link>
@@ -78,7 +78,7 @@ export default function Navbar(): React.ReactElement {
 
           {/* Desktop Navigation */}
           <motion.div
-            className="hidden md:flex space-x-1"
+            className="hidden lg:flex space-x-1"
             variants={containerVariants}
             initial="hidden"
             animate="visible">
@@ -89,7 +89,7 @@ export default function Navbar(): React.ReactElement {
                 className="relative">
                 <Link
                   href={item.href || `#${item.id}`}
-                  className={`px-4 py-2 block text-[16px] font-inter rounded-md transition-all duration-200 ${
+                  className={`px-4 py-2 block 2xl:text-[16px] xl:text-[14px] md:text-[12px] sm:text-[8px] font-inter rounded-md transition-all duration-200 ${
                     activeLink === item.id
                       ? "text-primary font-bold font-inter"
                       : "text-text font-normal hover:text-primary cursor-pointer"
@@ -110,7 +110,7 @@ export default function Navbar(): React.ReactElement {
               </motion.div>
             ))}
           </motion.div>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-4">
             <Link
               href="#"
               className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
@@ -125,7 +125,7 @@ export default function Navbar(): React.ReactElement {
 
           {/* Mobile Menu Button */}
           <motion.button
-            className="md:hidden cursor-pointer p-2 rounded-md text-text hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
+            className="lg:hidden cursor-pointer p-2 rounded-md text-text hover:text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             whileTap={{ scale: 0.95 }}
             aria-label="Toggle menu"
