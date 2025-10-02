@@ -119,7 +119,7 @@ export default function ProductPage() {
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
             }`}>
-            List Products
+            Add Products
           </button>
           <button
             onClick={() => setActiveTab("listed")}
@@ -184,10 +184,10 @@ export default function ProductPage() {
               <button
                 onClick={handleAddProduct}
                 className="bg-primary w-full text-white px-6 py-2 rounded-full font-sans font-semibold text-lg">
-                List Product
+                Add Product
               </button>
             </div>
-            <div className="border-[3px] border-spacing-6 border-dashed border-primary flex flex-col justify-center items-center p-8 rounded-4xl">
+            <div className="border-[3px] border-spacing-6 bg-[#FFF5F0] border-dashed border-primary flex flex-col justify-center items-center p-8 rounded-4xl">
               <p className="text-text text-2xl font-bold font-inter">
                 Upload Product Picture
               </p>
@@ -195,7 +195,7 @@ export default function ProductPage() {
                 <IoImageOutline className="size-8" />
                 <span>
                   Drag & drop or click to{" "}
-                  <span className="underline text-lg font-medium">
+                  <span className="underline font-inter text-lg font-semibold">
                     Upload Store’s Picture
                   </span>{" "}
                 </span>
