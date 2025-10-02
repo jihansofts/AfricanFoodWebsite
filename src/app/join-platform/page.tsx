@@ -1,4 +1,4 @@
-import RegisterPage from "@/components/JoinPlatform/RegisterPage";
+import RegisterPage from "@/components/JoinPlatform/JoinRegisterPage";
 import React from "react";
 
 export default function page() {

@@ -47,7 +47,7 @@ const data: WhyChooseUsProps[] = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="bg-background py-20">
+    <section id="why-us" className="bg-background py-20">
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
         {/* Left Content */}
         <div className="lg:col-span-6 flex flex-col justify-center">

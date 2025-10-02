@@ -84,68 +84,23 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
         ))}
       </div>
 
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <h1 className="text-text text-[32px] md:text-[44px] lg:text-[56px] font-semibold font-sans">
-              <span className="text-primary">Best</span> Selling
-            </h1>
-            <button className="view-all-button">View All</button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button title="button" className="arrow-button">
-              <IoIosArrowBack className="size-5" />
-            </button>
-            <span className="text-text text-base font-bold">1 / 2</span>
-            <button title="button" className="arrow-button">
-              <IoIosArrowForward className="size-5" />
-            </button>
-          </div>
-        </div>
-        <FoodCard datas={selectedCategory.bestSaleing} />
-      </div>
+      <FoodCard
+        datas={selectedCategory.bestSaleing}
+        titleblack="Best"
+        titleorange=" Selling"
+      />
 
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <h1 className="text-text text-[32px] md:text-[44px] lg:text-[56px] font-semibold font-sans">
-              <span className="text-primary">Top</span> Rated
-            </h1>
-            <button className="view-all-button">View All</button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button title="button" className="arrow-button">
-              <IoIosArrowBack className="size-5" />
-            </button>
-            <span className="text-text text-base font-bold">1 / 2</span>
-            <button title="button" className="arrow-button">
-              <IoIosArrowForward className="size-5" />
-            </button>
-          </div>
-        </div>
-        <FoodCard datas={selectedCategory.topRated} />
-      </div>
+      <FoodCard
+        datas={selectedCategory.topRated}
+        titleblack="Top"
+        titleorange=" Rated"
+      />
 
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <h1 className="text-text text-[32px] md:text-[44px] lg:text-[56px] font-semibold font-sans">
-              <span className="text-primary">Featured</span> Products
-            </h1>
-            <button className="view-all-button">View All</button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button title="button" className="arrow-button">
-              <IoIosArrowBack className="size-5" />
-            </button>
-            <span className="text-text text-base font-bold">1 / 2</span>
-            <button title="button" className="arrow-button">
-              <IoIosArrowForward className="size-5" />
-            </button>
-          </div>
-        </div>
-        <FoodCard datas={selectedCategory.FetureProducts} />
-      </div>
+      <FoodCard
+        datas={selectedCategory.FetureProducts}
+        titleblack="Featured Products"
+        titleorange=" Rated"
+      />
     </>
   );
 }

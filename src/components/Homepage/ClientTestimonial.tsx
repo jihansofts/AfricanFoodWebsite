@@ -87,7 +87,7 @@ export default function ClientTestimonial() {
   const visibleTestimonials = getVisibleTestimonials();
 
   return (
-    <div className="bg-background">
+    <section id="testimonials" className="bg-background">
       <div className="container mx-auto p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-4">
@@ -104,15 +104,13 @@ export default function ClientTestimonial() {
             <button
               onClick={prevTestimonial}
               title="Previous testimonial"
-              className="arrow-button bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-colors"
-            >
+              className="arrow-button bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-colors">
               <IoIosArrowBack className="size-5" />
             </button>
             <button
               onClick={nextTestimonial}
               title="Next testimonial"
-              className="arrow-button bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-colors"
-            >
+              className="arrow-button bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-colors">
               <IoIosArrowForward className="size-5" />
             </button>
           </div>
@@ -122,9 +120,8 @@ export default function ClientTestimonial() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {visibleTestimonials.map((testimonial, index) => (
               <div
-                key={testimonial.id}
-                className="border border-gray-200 rounded-xl p-6 shadow-md space-y-4"
-              >
+                key={index}
+                className="border border-gray-200 rounded-xl p-6 shadow-md space-y-4">
                 <p className="text-[19px] font-inter text-[#6D6D74] italic">
                   {testimonial.text}
                 </p>
@@ -151,6 +148,7 @@ export default function ClientTestimonial() {
           <div className="flex justify-center space-x-2 mt-6">
             {clientTest.map((_, index) => (
               <button
+                title="Change testimonial"
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`h-3 w-3 rounded-full ${
@@ -161,6 +159,6 @@ export default function ClientTestimonial() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
