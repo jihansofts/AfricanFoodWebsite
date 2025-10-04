@@ -19,29 +19,50 @@ export default function ClientTestimonial() {
   const clientTest: Testimonial[] = [
     {
       id: 1,
-      name: "Brooklyn Simmons",
-      text: "“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”",
+      name: "— Amara O.",
+      text: "“AfricanFoodZones brought the taste of home right to my doorstep! The Egusi Soup was just like my grandmother’s, bursting with authentic flavors. The ordering process was seamless, and delivery was super fast. I’m already looking forward to my next order!”",
       rating: 5,
       image: "/images/clienttestimonial/client1.png",
     },
     {
       id: 2,
-      name: "Leslie Alexander",
-      text: "“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”",
+      name: "— James K.",
+      text: "“As a foodie, I’m always on the hunt for unique culinary experiences. AfricanFoodZones introduced me to Ghanaian Jollof Rice, and it was a game-changer! The spices were perfectly balanced, and the platform’s community vibe makes it so special.”",
       rating: 5,
       image: "/images/clienttestimonial/client2.png",
     },
     {
       id: 3,
-      name: "Jenny Wilson",
-      text: "“Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.”",
-      rating: 4,
+      name: "— Fatima A.",
+      text: "“I’ve been craving authentic Nigerian cuisine since moving abroad, and AfricanFoodZones delivered beyond my expectations. The Suya was smoky and delicious, and the groceries section had all the spices I needed to recreate it at home!”",
+      rating: 5,
       image: "/images/clienttestimonial/client3.png",
     },
     {
       id: 4,
-      name: "John Doe",
-      text: "“Excellent service and amazing quality. Highly recommended!”",
+      name: "— Kwame S.",
+      text: "“What a fantastic platform! I ordered a variety of West African dishes for a family gathering, and everyone was blown away by the quality and authenticity. AfricanFoodZones is now my go-to for celebrating our heritage.”",
+      rating: 5,
+      image: "/images/clienttestimonial/client1.png",
+    },
+    {
+      id: 5,
+      name: "— Adeola E.",
+      text: "“The customer service at AfricanFoodZones is top-notch! I had a question about my order, and they responded quickly and professionally. The Ayamase I ordered was fresh, flavorful, and beautifully packaged. Highly recommended!”",
+      rating: 5,
+      image: "/images/clienttestimonial/client1.png",
+    },
+    {
+      id: 6,
+      name: "— Tade M.",
+      text: "“I love how AfricanFoodZones connects me with local African vendors. The Pounded Yam and Vegetable Soup combo was a nostalgic treat, and the platform makes it so easy to explore new dishes. It’s like a culinary adventure every time!”",
+      rating: 5,
+      image: "/images/clienttestimonial/client2.png",
+    },
+    {
+      id: 7,
+      name: "— Aisha B.",
+      text: "“AfricanFoodZones is a gem for anyone who loves African cuisine. The community recipe section inspired me to try cooking Egusi myself, and the ingredients I ordered arrived fresh and well-packaged. This platform is a true celebration of African culture!”",
       rating: 5,
       image: "/images/clienttestimonial/client3.png",
     },
@@ -95,8 +116,8 @@ export default function ClientTestimonial() {
               What Our <span className="text-primary">Clients</span> Say
             </h1>
             <p className="max-w-2xl text-[19px] text-[#6D6D74]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Read what our clients are <br className="hidden md:block" />{" "}
+              talking about us
             </p>
           </div>
 
