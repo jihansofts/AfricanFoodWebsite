@@ -20,18 +20,12 @@ const accountData = {
     btnName: "List Your Items",
     buttonUrl: "/listed-product-vendor",
   },
-  rider: {
-    image: "/images/delivering.png",
-    label: "Name",
-    btnName: "Start Delivering",
-    buttonUrl: "/rider-order-accept",
-  },
 };
 
 export default function VentorRegisterPage() {
-  const [accountType, setAccountType] = useState<
-    "customer" | "vendor" | "rider"
-  >("vendor");
+  const [accountType, setAccountType] = useState<"customer" | "vendor">(
+    "vendor"
+  );
   const [checked, setChecked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -39,7 +33,6 @@ export default function VentorRegisterPage() {
   const [formData, setFormData] = useState({
     customer: { username: "", email: "", password: "", confirmPassword: "" },
     vendor: { username: "", email: "", password: "", confirmPassword: "" },
-    rider: { username: "", email: "", password: "", confirmPassword: "" },
   });
 
   const handleClick = () => {
@@ -81,7 +74,7 @@ export default function VentorRegisterPage() {
 
             {/* Account Type Selector */}
             <div className="flex gap-6 mb-4">
-              {["customer", "vendor", "rider"].map((type) => (
+              {["customer", "vendor"].map((type) => (
                 <label
                   key={type}
                   className="flex items-center gap-2 cursor-pointer">
@@ -90,9 +83,7 @@ export default function VentorRegisterPage() {
                     value={type}
                     checked={accountType === type}
                     onChange={(e) =>
-                      setAccountType(
-                        e.target.value as "customer" | "vendor" | "rider"
-                      )
+                      setAccountType(e.target.value as "customer" | "vendor")
                     }
                     className="hidden peer"
                   />
@@ -116,6 +107,19 @@ export default function VentorRegisterPage() {
                   </span>
                 </label>
               ))}
+            </div>
+
+            <div className="space-y-8">
+              {/* Google Sing Up Button */}
+              <button className="w-full border border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2">
+                <Image
+                  src="/images/google.png"
+                  alt="Google Icon"
+                  width={20}
+                  height={20}
+                />
+                Sign Up with Google
+              </button>
             </div>
 
             {/* Form */}

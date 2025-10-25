@@ -30,7 +30,7 @@ const data: CommunityProps[] = [
   },
   {
     id: 3,
-    image: "/images/community2.png",
+    image: "/images/community3.png",
     title: "Start Delivering",
     desc: "Become a Delivery Partner and bring Africa’s flavors to more homes.",
     btn: "Start Delivering",

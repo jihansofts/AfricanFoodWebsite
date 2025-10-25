@@ -1,4 +1,4 @@
-import VentorRegisterPage from "@/components/ListOnOurPlatform/VentorRegisterPage";
+import VentorRegisterPage from "@/components/Becomeavendor/VentorRegisterPage";
 
 export default function Page() {
   return (
