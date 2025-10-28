@@ -5,6 +5,8 @@ import Image from "next/image";
 import InputBox from "@/common/InputBox";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import Link from "next/link";
+import Swal from "sweetalert2";
+import { signIn } from "next-auth/react";
 
 // Mapping account type to image, label, button text, and button URL
 const accountData = {
@@ -22,26 +24,40 @@ const accountData = {
   },
 };
 
-export default function VentorRegisterPage() {
+export default function VentorRegisterPage({
+  setShowModal,
+}: {
+  setShowModal: (val: boolean) => void;
+}) {
   const [accountType, setAccountType] = useState<"customer" | "vendor">(
     "vendor"
   );
   const [checked, setChecked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [base64String, setBase64String] = React.useState<string>("");
 
   // Separate form data per account type
   const [formData, setFormData] = useState({
-    customer: { username: "", email: "", password: "", confirmPassword: "" },
-    vendor: { username: "", email: "", password: "", confirmPassword: "" },
+    customer: { name: "", email: "", password: "", confirmPassword: "" },
+    vendor: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
-
+  const handleGoogleSignIn = () => {
+    const role = accountType === "vendor" ? "vendor" : "customer";
+    const callbackUrl = `${window.location.origin}/?role=${role}`;
+    signIn("google", { callbackUrl });
+  };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      console.log("Selected file:", e.target.files[0]);
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64String(reader.result as string);
+      };
+      reader.readAsDataURL(file); // Converts file to Base64
     }
   };
 
@@ -53,6 +69,42 @@ export default function VentorRegisterPage() {
         [field]: value,
       },
     });
+  };
+  // ✅ Submit Handler (Main Registration Logic)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { name, email, password, confirmPassword } = formData[accountType];
+
+    if (!name || !email || !password || !confirmPassword) return;
+
+    if (password !== confirmPassword) return;
+
+    if (!checked) return;
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          role: accountType,
+          profileImage:
+            base64String ||
+            "https://cdn-icons-png.flaticon.com/512/10337/10337609.png",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok)
+        Swal.fire("Error", data.error || "Registration failed", "error");
+
+      Swal.fire("Success!", "Account created successfully!", "success");
+    } catch (error) {
+      Swal.fire("Error", (error as Error).message, "error");
+    }
   };
 
   return (
@@ -111,7 +163,9 @@ export default function VentorRegisterPage() {
 
             <div className="space-y-8">
               {/* Google Sing Up Button */}
-              <button className="w-full border border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2">
+              <button
+                onClick={handleGoogleSignIn}
+                className="w-full border  border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2">
                 <Image
                   src="/images/google.png"
                   alt="Google Icon"
@@ -123,13 +177,13 @@ export default function VentorRegisterPage() {
             </div>
 
             {/* Form */}
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-8" onSubmit={handleSubmit}>
               <InputBox
-                id="username"
+                id="name"
                 label={accountData[accountType].label}
                 placeholder="@username"
-                value={formData[accountType].username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
+                value={formData[accountType].name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
               />
               <InputBox
                 id="email"
@@ -208,20 +262,20 @@ export default function VentorRegisterPage() {
               </div>
 
               {/* Button */}
-              <Link
-                href={accountData[accountType].buttonUrl}
+              <button
+                type="submit"
                 className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center">
-                {accountData[accountType].btnName}
-              </Link>
+                Registration
+              </button>
             </form>
 
             <p className="text-center text-[16px] text-text font-normal font-inter mt-4">
               Already Have an Account?{" "}
-              <Link
-                href="/login"
-                className="text-primary underline font-medium">
+              <button
+                onClick={() => setShowModal(true)}
+                className="text-primary cursor-pointer underline font-medium">
                 Log in
-              </Link>
+              </button>
             </p>
           </div>
 

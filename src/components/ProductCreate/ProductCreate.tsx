@@ -21,8 +21,10 @@ interface Form {
   image: string;
   category: string;
 }
-export default function ProductPage() {
-  const [activeTab, setActiveTab] = useState<"list" | "listed">("list");
+export default function ProductCreate() {
+  const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
+    "list"
+  );
   const [products, setProducts] = useState<Product[]>([
     {
       id: 1,
@@ -129,6 +131,15 @@ export default function ProductPage() {
                 : "text-gray-600"
             }`}>
             Listed Products
+          </button>
+          <button
+            onClick={() => setActiveTab("upgrade")}
+            className={`pb-3 lg:text-2xl md:text-[18px] text-[16px] font-semibold ${
+              activeTab === "upgrade"
+                ? "border-b-2 border-primary text-primary"
+                : "text-gray-600"
+            }`}>
+            Upgrade Package
           </button>
         </div>
 
@@ -246,6 +257,17 @@ export default function ProductPage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {activeTab === "upgrade" && (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Upgrade Your Package</h2>
+            <p className="text-lg mb-8">
+              Upgrade your package to add more products
+            </p>
+            <button className="bg-primary text-white px-6 py-2 rounded-full font-sans font-semibold text-lg">
+              Upgrade Now
+            </button>
           </div>
         )}
       </div>

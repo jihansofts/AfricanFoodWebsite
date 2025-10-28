@@ -1,21 +1,35 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-export type UserRole = "Vendor" | "User";
+export type UserRole = "vendor" | "customer";
+export type PackageType = "free" | "basic" | "premium" | "enterprise";
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   role: UserRole;
-  googleid: string;
+  googleid?: string;
+  profileImage?: string;
+  packaged: PackageType;
+  whatsappNumber?: string;
+  productLimit: number;
 }
+
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ["Vendor", "User"], default: "User" },
-    googleid: { type: String, },
+    password: { type: String },
+    packaged: {
+      type: String,
+      enum: ["free", "basic", "premium", "enterprise"],
+      default: "free",
+    },
+    role: { type: String, enum: ["vendor", "customer"], default: "customer" },
+    googleid: { type: String },
+    profileImage: { type: String },
+    productLimit: { type: Number, default: 3 },
+    whatsappNumber: { type: String },
   },
   { timestamps: true, versionKey: false }
 );

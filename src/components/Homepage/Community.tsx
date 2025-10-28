@@ -26,7 +26,7 @@ const data: CommunityProps[] = [
     title: "List On Our Platform",
     desc: "Become a Merchant and share your authentic African dishes with the world.",
     btn: "List Your Items",
-    link: "/list-our-platform",
+    link: "/join-our-ventor",
   },
   {
     id: 3,

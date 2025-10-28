@@ -1,13 +1,13 @@
 "use client";
-import LoginModal from "@/common/LoginModel";
-import RegisterPage from "@/components/JoinPlatform/JoinRegisterPage";
 import React, { useState } from "react";
+import VentorRegisterPage from "@/components/Becomeavendor/VentorRegisterPage";
+import LoginModal from "@/common/LoginModel";
 
 export default function Page() {
   const [showModal, setShowModal] = useState(false);
   return (
     <main>
-      <RegisterPage setShowModal={setShowModal} />
+      <VentorRegisterPage setShowModal={setShowModal} />
       <LoginModal showModal={showModal} setShowModal={setShowModal} />
     </main>
   );

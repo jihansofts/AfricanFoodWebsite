@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
+import LoginModal from "./LoginModel";
 
 type NavItem = {
   id: string;
@@ -13,6 +14,7 @@ type NavItem = {
 export default function Navbar(): React.ReactElement {
   const [activeLink, setActiveLink] = useState<string>("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
 
   const navItems: NavItem[] = [
     { id: "home", label: "HOME", href: "/" },
@@ -111,11 +113,12 @@ export default function Navbar(): React.ReactElement {
             ))}
           </motion.div>
           <div className="hidden lg:flex items-center space-x-4">
-            <Link
-              href="#"
+            <button
+              onClick={() => setShowModal(true)}
               className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
               Login
-            </Link>
+            </button>
+            <LoginModal showModal={showModal} setShowModal={setShowModal} />
             <Link
               href="/join-platform"
               className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary  hover:text-background cursor-pointer">
