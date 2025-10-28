@@ -2,13 +2,14 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 interface CommunityProps {
   id: number;
   image: string;
   title: string;
   desc: string;
   btn: string;
-  link: string;
+  link?: string;
 }
 
 const data: CommunityProps[] = [
@@ -26,7 +27,10 @@ const data: CommunityProps[] = [
     title: "List On Our Platform",
     desc: "Become a Merchant and share your authentic African dishes with the world.",
     btn: "List Your Items",
-    link: "/join-our-ventor",
+    link: {
+      pathname: "/join-our-vendor",
+      query: { role: "vendor" },
+    } as unknown as string,
   },
   {
     id: 3,
@@ -38,6 +42,7 @@ const data: CommunityProps[] = [
   },
 ];
 export default function Community() {
+  const { user } = useAuth();
   return (
     <section id="community" className="bg-[#F7F7F7] py-16">
       <div className="container mx-auto px-4">
@@ -72,16 +77,32 @@ export default function Community() {
                 </p>
 
                 {/* Button Section */}
-                <div className="mt-auto pt-4">
-                  <Link href={item.link}>
-                    <button
-                      className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
-                           transition-all duration-200 text-background font-semibold 
-                           hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
-                      {item.btn}
-                    </button>
-                  </Link>
-                </div>
+                {!user ? (
+                  <div className="mt-auto pt-4">
+                    <Link href={item.link || "#"}>
+                      <button
+                        className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
+          transition-all duration-200 text-background font-semibold 
+          hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                        {item.btn}
+                      </button>
+                    </Link>
+                  </div>
+                ) : user.role === "customer" ? (
+                  <div className="mt-auto pt-4">
+                    <Link href="/customer/orders">
+                     
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-auto pt-4">
+                    <Link href="/vendor/create-product-vendor">
+                      <span className="text-primary underline">
+                        Create Your Products Now
+                      </span>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           ))}

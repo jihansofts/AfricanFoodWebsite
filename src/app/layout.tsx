@@ -3,6 +3,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/common/Navbar";
 import Footer from "@/common/Footer";
+import Providers from "@/components/Providers";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${inter.variable} antialiased`}>
-        <Navbar />
-        {children}
-        <Footer />
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

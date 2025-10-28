@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
 import LoginModal from "./LoginModel";
@@ -12,6 +14,8 @@ type NavItem = {
 };
 
 export default function Navbar(): React.ReactElement {
+  const { user, logout, loading } = useAuth();
+  console.log("Navbar user:", user);
   const [activeLink, setActiveLink] = useState<string>("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);
@@ -113,17 +117,60 @@ export default function Navbar(): React.ReactElement {
             ))}
           </motion.div>
           <div className="hidden lg:flex items-center space-x-4">
-            <button
-              onClick={() => setShowModal(true)}
-              className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
-              Login
-            </button>
-            <LoginModal showModal={showModal} setShowModal={setShowModal} />
-            <Link
-              href="/join-platform"
-              className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary  hover:text-background cursor-pointer">
-              Sign Up
-            </Link>
+            {!user ? (
+              <>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="px-7 py-2 text-[16px] bg-primary border-primary  font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                  Login
+                </button>
+                <LoginModal showModal={showModal} setShowModal={setShowModal} />
+                <Link
+                  href="/join-platform"
+                  className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary  hover:text-background cursor-pointer">
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="relative group inline-flex items-center space-x-2 cursor-pointer">
+                  {/* Profile image + name */}
+                  <Image
+                    src={user.image as string}
+                    width={40}
+                    height={40}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-primary"
+                  />
+                  <span className="text-primary font-sins font-medium">
+                    {user.name}
+                  </span>
+
+                  {/* Dropdown box */}
+                  <div
+                    className="absolute flex flex-col items-start bg-white shadow-xl border border-gray-100 rounded-xl top-full right-0 mt-3 w-48 py-3 z-50
+               opacity-0 translate-y-2 pointer-events-none
+               group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto
+               transition-all duration-500 ease-in-out">
+                    <div className="px-4 py-2 text-gray-700 font-inter text-sm w-full hover:bg-gray-50 rounded-t-xl">
+                      <div className="font-semibold text-gray-900 truncate">
+                        {user.name}
+                      </div>
+                    </div>
+
+                    <hr className="my-2 w-full border-gray-200" />
+
+                    <div className="w-full px-4 py-2">
+                      <button
+                        onClick={logout}
+                        className="px-4 py-2 cursor-pointer text-[15px] w-full text-left bg-primary text-white font-inter rounded-lg transition-all duration-200 hover:border-primary border-2 hover:bg-background hover:text-primary">
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -194,16 +241,57 @@ export default function Navbar(): React.ReactElement {
 
                 {/* ✅ Mobile Auth Buttons */}
                 <div className="mt-4 flex flex-col gap-3 px-3">
-                  <Link
-                    href="#"
-                    className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
-                    Login
-                  </Link>
-                  <Link
-                    href="/join-platform"
-                    className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary hover:text-background cursor-pointer">
-                    Sign Up
-                  </Link>
+                  {!user ? (
+                    <>
+                      <Link
+                        href="#"
+                        className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl transition-all duration-200 text-background font-semibold hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                        Login
+                      </Link>
+                      <Link
+                        href="/join-platform"
+                        className="px-6 py-2 text-[16px] bg-background border-primary border-2 font-inter rounded-4xl transition-all duration-200 text-primary font-semibold hover:bg-primary hover:text-background cursor-pointer">
+                        Sign Up
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <div className=" items-center space-x-2 space-y-4 cursor-pointer">
+                        {/* Profile image + name */}
+                        <Image
+                          src={user.image as string}
+                          width={40}
+                          height={40}
+                          alt="Profile"
+                          className="w-16 h-16 rounded-full object-cover border-2 border-primary"
+                        />
+                        <span className="text-primary font-sins text-[16px] font-bold">
+                          {user.name}
+                        </span>
+
+                        {/* Dropdown box */}
+                        <div
+                          className="flex flex-col items-start rounded-xl py-3
+              ">
+                          {/* <div className="px-4 py-2 text-gray-700 font-inter text-sm w-full hover:bg-gray-50 rounded-t-xl">
+                            <div className="font-semibold text-gray-900 truncate">
+                              {user.name}
+                            </div>
+                          </div> */}
+
+                          <hr className="my-2 w-full border-gray-200" />
+
+                          <div className="w-full ">
+                            <button
+                              onClick={logout}
+                              className="px-4 py-2 cursor-pointer text-[15px] w-full text-left bg-primary text-white font-inter rounded-lg transition-all duration-200 hover:border-primary border-2 hover:bg-background hover:text-primary">
+                              Logout
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -1,5 +1,7 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth, { NextAuthOptions, Account, Profile, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
 import { connectDB } from "@/lib/db";
 import { UserModel } from "@/model/UserModel";
 
@@ -11,60 +13,359 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           prompt: "select_account",
+          scope: "openid email profile",
         },
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
-    async signIn({ user, account, profile }) {
-      await connectDB();
+    async signIn({
+      user,
+      account,
+      profile,
+    }: {
+      user: User;
+      account: Account | null;
+      profile?: Profile | undefined;
+    }) {
+      try {
+        await connectDB();
 
-      // ✅ Get role directly from account.query if available
-      const role =
-        (account?.params as Record<string, string>)?.role ||
-        (typeof account?.url === "string"
-          ? new URL(account.url).searchParams.get("role")
-          : undefined) ||
-        "customer";
+        // Extract role from multiple possible sources
+        const role = extractRoleFromAccount(account) || "customer";
 
-      const existingUser = await UserModel.findOne({ email: user.email });
-
-      if (!existingUser) {
-        await UserModel.create({
-          name: user.name,
-          email: user.email,
-          password: profile?.sub,
-          role,
-          googleid: profile?.sub,
-          profileImage: user.image,
-        });
-        console.log("New user created:", user.role);
-      } else {
-        if (existingUser.role === "customer") {
-          existingUser.role = "vendor";
-          await existingUser.updateOne({ role: "vendor" });
+        if (!user.email) {
+          console.error("No email provided by Google");
+          return false;
         }
-      }
 
-      return true;
+        const existingUser = await UserModel.findOne({ email: user.email });
+
+        if (!existingUser) {
+          // Create new user
+          await UserModel.create({
+            name: user.name,
+            email: user.email,
+            password: profile?.sub, // Using Google sub as password fallback
+            role: role,
+            googleId: profile?.sub,
+            profileImage: user.image,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          console.log(`New ${role} user created:`, user.email);
+        } else {
+          // Update existing user if needed
+          const updates: { [key: string]: string | Date } = {
+            updatedAt: new Date(),
+            lastLogin: new Date(),
+          };
+
+          // Update profile image if not set
+          if (!existingUser.profileImage && user.image) {
+            updates.profileImage = user.image;
+          }
+
+          // Update name if changed
+          if (user.name && existingUser.name !== user.name) {
+            updates.name = user.name;
+          }
+
+          // Role upgrade logic: customer can become vendor
+          if (existingUser.role === "customer" && role === "vendor") {
+            updates.role = "vendor";
+          }
+
+          if (Object.keys(updates).length > 2) {
+            // More than just updatedAt and lastLogin
+            await UserModel.updateOne({ email: user.email }, { $set: updates });
+          }
+        }
+
+        return true;
+      } catch (error) {
+        console.error("SignIn callback error:", error);
+        return false;
+      }
     },
 
-    async redirect({ url, baseUrl }) {
+    async jwt({
+      token,
+      user,
+    }: {
+      token: JWT;
+      user?: User;
+      account?: Account | null;
+      profile?: Profile;
+    }) {
       try {
-        const resolved = new URL(url, baseUrl);
-        const role = resolved.searchParams.get("role");
-        if (role === "vendor") return `${baseUrl}/create-product-vendor`;
+        await connectDB();
 
-        if (role === "customer") return `${baseUrl}/dashboard`;
-      } catch (e) {
-        console.error(e);
+        // Add user info to token on sign in
+        if (user) {
+          const dbUser = await UserModel.findOne({ email: user.email });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.id = dbUser._id?.toString();
+            token.email = dbUser.email;
+          }
+        }
+
+        // Refresh user data on each JWT callback
+        if (token.email) {
+          const dbUser = await UserModel.findOne({ email: token.email });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.id = dbUser._id?.toString();
+          }
+        }
+
+        return token;
+      } catch (error) {
+        console.error("JWT callback error:", error);
+        return token;
       }
+    },
 
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      return baseUrl;
+    async session({ session, token }) {
+      try {
+        await connectDB();
+
+        if (token.email) {
+          const dbUser = await UserModel.findOne({ email: token.email });
+
+          if (dbUser) {
+            session.user = {
+              id: dbUser._id?.toString(),
+              name: dbUser.name,
+              email: dbUser.email,
+              role: dbUser.role,
+              image: dbUser.profileImage,
+            };
+          } else {
+            // Fallback to token data if user not found in DB
+            session.user.id = token.id;
+            session.user.role = token.role;
+          }
+        }
+
+        return session;
+      } catch (error) {
+        console.error("Session callback error:", error);
+        return session;
+      }
+    },
+
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      try {
+        await connectDB();
+
+        // Use provided baseUrl or fallback to environment variable
+        const actualBaseUrl =
+          baseUrl || process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+        // Allow callbackUrl to work for other redirects
+        if (url.startsWith(`${actualBaseUrl}/`) && !url.includes("/auth/")) {
+          return url;
+        }
+
+        // For auth-related redirects, determine based on user role
+        if (url.includes("/api/auth/")) {
+          // This is tricky because we don't have user context here
+          // We'll handle role-based redirects in the signIn callback instead
+          return `${actualBaseUrl}/`;
+        }
+
+        return `${actualBaseUrl}/`;
+      } catch (error) {
+        console.error("Redirect callback error:", error);
+        return `${baseUrl}/`;
+      }
+    },
+  },
+  pages: {
+    signIn: "/vendor/create-product-vendor",
+    signOut: "/auth/logout",
+    error: "/auth/error",
+  },
+  events: {
+    async signIn({
+      user,
+      isNewUser,
+    }: {
+      user: User;
+      account: Account | null;
+      profile?: Profile;
+      isNewUser?: boolean;
+    }) {
+      console.log(`User signed in: ${user.email}, isNewUser: ${isNewUser}`);
+    },
+    async signOut({ token }: { token: JWT }) {
+      console.log(`User signed out: ${token.email}`);
     },
   },
 };
 
+// Helper function to extract role from account object
+function extractRoleFromAccount(account: Account | null): string | null {
+  if (!account) return null;
+
+  // Try to get role from custom parameters
+  const customParams = account as { role?: string } as {
+    role?: string;
+    query?: { [key: string]: string };
+    params?: { [key: string]: string };
+  };
+
+  // Check multiple possible locations for role parameter
+  if (customParams.role) {
+    return customParams.role;
+  }
+
+  if (customParams.query?.role) {
+    return customParams.query.role;
+  }
+
+  if (customParams.params?.role) {
+    return customParams.params.role;
+  }
+
+  // Extract from URL if available
+  if (account.url) {
+    try {
+      const url = new URL(account.url as string);
+      return url.searchParams.get("role");
+    } catch (error) {
+      console.error("Error parsing URL for role:", error);
+    }
+  }
+
+  return null;
+}
+
+// Enhanced auth guard utilities
+export class AuthGuard {
+  static async requireAuth() {
+    const { getServerSession } = await import("next-auth");
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      throw new Error("Authentication required");
+    }
+
+    return session;
+  }
+
+  static async requireRole(requiredRole: string | string[]) {
+    const session = await this.requireAuth();
+    const userRole = session.user.role;
+    const requiredRoles = Array.isArray(requiredRole)
+      ? requiredRole
+      : [requiredRole];
+
+    if (!requiredRoles.includes(userRole as string)) {
+      throw new Error(
+        `Insufficient permissions. Required role: ${requiredRoles.join(", ")}`
+      );
+    }
+
+    return session;
+  }
+
+  static async getUserFromToken(token: string) {
+    const { decode } = await import("next-auth/jwt");
+    const secret = process.env.NEXTAUTH_SECRET;
+
+    if (!secret) {
+      throw new Error("NEXTAUTH_SECRET is not defined");
+    }
+
+    const decoded = await decode({
+      token,
+      secret,
+    });
+
+    return decoded;
+  }
+}
+
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
+
+// import NextAuth, { NextAuthOptions } from "next-auth";
+// import GoogleProvider from "next-auth/providers/google";
+// import { connectDB } from "@/lib/db";
+// import { UserModel } from "@/model/UserModel";
+
+// export const authOptions: NextAuthOptions = {
+//   providers: [
+//     GoogleProvider({
+//       clientId: process.env.GOOGLE_CLIENT_ID!,
+//       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+//       authorization: {
+//         params: {
+//           prompt: "select_account",
+//         },
+//       },
+//     }),
+//   ],
+//   callbacks: {
+//     async signIn({ user, account, profile }) {
+//       await connectDB();
+
+//       // ✅ Get role directly from account.query if available
+//       const role =
+//         (account?.params as Record<string, string>)?.role ||
+//         (typeof account?.url === "string"
+//           ? new URL(account.url).searchParams.get("role")
+//           : undefined) ||
+//         "customer";
+
+//       const existingUser = await UserModel.findOne({ email: user.email });
+
+//       if (!existingUser) {
+//         await UserModel.create({
+//           name: user.name,
+//           email: user.email,
+//           password: profile?.sub,
+//           role,
+//           googleid: profile?.sub,
+//           profileImage: user.image,
+//         });
+//         console.log("New user created:", user.role);
+//       } else {
+//         if (existingUser.role === "customer") {
+//           existingUser.role = "vendor";
+//           await existingUser.updateOne({ role: "vendor" });
+//         }
+//       }
+
+//       return true;
+//     },
+
+//     async redirect({ url, baseUrl }) {
+//       try {
+//         const resolved = new URL(url, baseUrl);
+//         const role = resolved.searchParams.get("role");
+//         if (role === "vendor") return `${baseUrl}/create-product-vendor`;
+
+//         if (role === "customer") return `${baseUrl}/dashboard`;
+//       } catch (e) {
+//         console.error(e);
+//       }
+
+//       if (url.startsWith("/")) return `${baseUrl}${url}`;
+//       return baseUrl;
+//     },
+//   },
+// };
+
+// const handler = NextAuth(authOptions);
+// export { handler as GET, handler as POST };
