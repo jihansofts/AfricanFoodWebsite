@@ -21,7 +21,7 @@ export default function AuthCallback() {
       });
 
       if (userRole === "vendor") {
-        router.push("/listed-product-vendor");
+        router.push("/vendor/create-product-vendor");
       } else {
         router.push("/");
       }

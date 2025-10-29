@@ -14,8 +14,7 @@ type NavItem = {
 };
 
 export default function Navbar(): React.ReactElement {
-  const { user, logout, loading } = useAuth();
-  console.log("Navbar user:", user);
+  const { user, logout } = useAuth();
   const [activeLink, setActiveLink] = useState<string>("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showModal, setShowModal] = useState(false);

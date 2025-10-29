@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -16,6 +17,8 @@ export default function LoginModal({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login } = useAuth();
+
   const handleLoginGoogle = async (e: React.FormEvent) => {
     e.preventDefault();
     await signIn("google", { callbackUrl: "/auth/callback" });
@@ -25,7 +28,7 @@ export default function LoginModal({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Basic validation before API call
+    // Basic validation
     if (!email || !password) {
       Swal.fire({
         icon: "warning",
@@ -55,7 +58,6 @@ export default function LoginModal({
 
       const data = await res.json();
 
-      // Handle backend errors
       if (!res.ok || data.error) {
         Swal.fire({
           icon: "error",
@@ -65,7 +67,16 @@ export default function LoginModal({
         return;
       }
 
-      // Login successful
+      // ✅ Save user info in AuthContext
+      if (data.user) {
+        login(data.user); // <-- this updates context + localStorage
+      }
+
+      // ✅ Optional: save token in localStorage for API requests
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
       Swal.fire({
         icon: "success",
         title: "Login Successful",
@@ -76,7 +87,7 @@ export default function LoginModal({
 
       setShowModal(false);
 
-      // Redirect based on role (optional)
+      // ✅ Redirect based on role
       if (data.user?.role === "vendor") {
         window.location.href = "/create-product-vendor";
       } else {

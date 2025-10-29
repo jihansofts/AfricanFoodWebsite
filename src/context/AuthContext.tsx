@@ -36,13 +36,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (status === "authenticated" && session?.user) {
       const { name, email, role, image } = session.user as User;
       setUser({ name, email, role, image });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name, email, role, image })
+      );
     } else if (status === "unauthenticated") {
-      setUser(null);
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
     }
   }, [session, status]);
 
   const login = (userData: User) => {
     setUser(userData);
+    // persist user in localStorage
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
