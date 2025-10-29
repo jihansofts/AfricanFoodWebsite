@@ -18,7 +18,6 @@ export default function Community() {
   console.log("user", user);
   const role = user?.role;
 
-  console.log(user?.name, "name");
 
   // ✅ Role-based dynamic links
   const data: CommunityProps[] = [

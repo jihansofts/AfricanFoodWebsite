@@ -147,7 +147,7 @@ export default function Navbar(): React.ReactElement {
 
                   {/* Dropdown box */}
                   <div
-                    className="absolute flex flex-col items-start bg-white shadow-xl border border-gray-100 rounded-xl top-full right-0 mt-3 w-48 py-3 z-50
+                    className="absolute flex flex-col items-start bg-white shadow-xl border border-gray-100 rounded-xl top-full right-0 mt-0 w-48 py-3 z-50
                opacity-0 translate-y-2 pointer-events-none
                group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto
                transition-all duration-500 ease-in-out">

@@ -63,15 +63,22 @@ export default function ProductCreate() {
     name: "",
   });
 
-  const handleAddProduct = () => {
+  const handleAddProduct  = async () => {
     if (!newProduct.name || !newProduct.price) return;
 
+    const responsive = await fetch("/api/products", {
+      method: "POST",
+      body: JSON.stringify(newProduct),
+    });
+
+    const data = await responsive.json();
+
     const productToAdd: Product = {
-      id: Date.now(),
+      id: data.id,
       title: newProduct.name,
       price: newProduct.price,
-      image: "/placeholder.jpg",
-      rating: 0,
+      image: newProduct.image || "/images/foodcategory/bestsale/c3best1.png",
+      rating: 5,
     };
 
     setProducts([...products, productToAdd]);
