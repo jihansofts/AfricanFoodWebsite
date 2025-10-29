@@ -1,61 +1,57 @@
+// /app/api/paypal/capture-order/route.ts
 import { paypalClient } from "@/lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
-import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
 import UserModel from "@/model/UserModel";
+import { connectDB } from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
-
     const { orderId, userId, packageType } = await req.json();
-
-    if (!orderId || !userId || !packageType) {
+    if (!orderId || !userId || !packageType)
       return NextResponse.json(
-        { error: "Missing orderId, userId, or packageType" },
+        { success: false, error: "Missing fields" },
         { status: 400 }
       );
-    }
 
-    // ✅ Create a new PayPal request and send an object body (payment_source required by type)
-    const request = new paypal.orders.OrdersCaptureRequest(orderId);
-    // The PayPal API requires a request body; provide a minimal payment_source and cast to any to satisfy TypeScript.
-    request.requestBody({ payment_source: {} } as never);
+    const captureReq = new paypal.orders.OrdersCaptureRequest(orderId);
+    captureReq.requestBody({ payment_source: { order_id: orderId } as never });
+    const capture = await paypalClient().execute(captureReq);
 
-    // ✅ Execute the capture request
-    const capture = await paypalClient().execute(request);
+    if (capture.result.status !== "COMPLETED")
+      return NextResponse.json(
+        { success: false, error: "Payment not completed" },
+        { status: 400 }
+      );
 
-    // ✅ Define package product limits
-    const limits: Record<string, number> = {
-      free: 3,
+    // ✅ Update user safely
+    const newLimits = {
       standard: 3,
       premium: 6,
       enterprise: 12,
     };
 
-    // ✅ Find the user
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    // normalize and narrow the packageType so TS can safely index newLimits
+    const pkg = String(packageType).toLowerCase() as
+      | "standard"
+      | "premium"
+      | "enterprise";
 
-    // ✅ Update the user package info
-    user.packaged = packageType.toLowerCase();
-    user.productLimit = limits[packageType.toLowerCase()] || 3;
-    await user.save();
-
-    // ✅ Return successful response
-    return NextResponse.json({
-      success: true,
-      message: `Upgraded to ${packageType} package`,
-      user,
-      captureId: capture?.result?.id || null,
-    });
-  } catch (err) {
-    console.error("PayPal capture error:", err);
-    return NextResponse.json(
-      { error: "Payment capture failed", details: err },
-      { status: 500 }
+    await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          packaged: pkg,
+          productLimit: newLimits[pkg] ?? 3,
+        },
+      },
+      { new: true, runValidators: true }
     );
+
+    return NextResponse.json({ success: true, status: capture.result.status });
+  } catch (err) {
+    console.error("Capture error:", err);
+    return NextResponse.json({ success: false, error: err }, { status: 500 });
   }
 }

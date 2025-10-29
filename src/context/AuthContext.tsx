@@ -11,6 +11,7 @@ import {
 } from "react";
 
 type User = {
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -29,18 +30,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
+  console.log(session?.user.id, "session");
   const [user, setUser] = useState<User | null>(null);
 
-  // Keep context user synced with NextAuth session
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      const { name, email, role, image } = session.user as User;
-      setUser({ name, email, role, image });
+      const { id, name, email, role, image } = session.user as User;
+      setUser({ id, name, email, role, image });
       localStorage.setItem(
         "user",
-        JSON.stringify({ name, email, role, image })
+        JSON.stringify({ id, name, email, role, image })
       );
     } else if (status === "unauthenticated") {
+    } else {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         setUser(JSON.parse(storedUser));

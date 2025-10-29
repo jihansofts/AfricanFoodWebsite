@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export type UserRole = "vendor" | "customer";
-export type PackageType = "free" | "basic" | "premium" | "enterprise";
+export type PackageType = "free" | "standard" | "premium" | "enterprise";
 
 export interface IUser extends Document {
   name: string;
@@ -22,7 +22,7 @@ const userSchema = new Schema<IUser>(
     password: { type: String },
     packaged: {
       type: String,
-      enum: ["free", "basic", "premium", "enterprise"],
+      enum: ["free", "standard", "premium", "enterprise"],
       default: "free",
     },
     role: { type: String, enum: ["vendor", "customer"], default: "customer" },

@@ -3,6 +3,8 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { IoImageOutline } from "react-icons/io5";
+import PackgeCard from "@/common/PackgeCard";
+import { useAuth } from "@/context/AuthContext";
 
 interface Product {
   id: number;
@@ -22,6 +24,8 @@ interface Form {
   category: string;
 }
 export default function ProductCreate() {
+  const { user } = useAuth();
+  const userId = user?.id;
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
     "list"
   );
@@ -63,7 +67,7 @@ export default function ProductCreate() {
     name: "",
   });
 
-  const handleAddProduct  = async () => {
+  const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.price) return;
 
     const responsive = await fetch("/api/products", {
@@ -268,13 +272,7 @@ export default function ProductCreate() {
         )}
         {activeTab === "upgrade" && (
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Upgrade Your Package</h2>
-            <p className="text-lg mb-8">
-              Upgrade your package to add more products
-            </p>
-            <button className="bg-primary text-white px-6 py-2 rounded-full font-sans font-semibold text-lg">
-              Upgrade Now
-            </button>
+            <PackgeCard  userId={userId as string}  />
           </div>
         )}
       </div>

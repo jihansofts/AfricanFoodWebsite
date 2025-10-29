@@ -4,7 +4,6 @@ export type ProductCategory = "Nigerian" | "Ghanaian" | "AfricanGroceries";
 
 export interface IProduct extends Document {
   name: string;
-  description: string;
   price: number;
   category: ProductCategory;
   imageUrl: string;
@@ -14,7 +13,6 @@ export interface IProduct extends Document {
 const productSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
-    description: { type: String, required: true },
     price: { type: Number, required: true },
     category: {
       type: String,

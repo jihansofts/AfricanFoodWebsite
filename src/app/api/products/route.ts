@@ -8,8 +8,7 @@ export async function POST(req: Request) {
   try {
     await connectDB();
 
-    const { userId, name, description, price, category, imageUrl } =
-      await req.json();
+    const { userId, name, price, category, imageUrl } = await req.json();
 
     const user = await UserModel.findById(userId);
     if (!user)
@@ -38,7 +37,6 @@ export async function POST(req: Request) {
     // ✅ Create the product
     const product = await ProductModel.create({
       name,
-      description,
       price,
       category,
       imageUrl: uploadedImageUrl,
@@ -54,3 +52,5 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
