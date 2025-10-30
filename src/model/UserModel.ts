@@ -29,7 +29,7 @@ const userSchema = new Schema<IUser>(
     googleid: { type: String },
     profileImage: { type: String },
     productLimit: { type: Number, default: 3 },
-    whatsappNumber: { type: String },
+    whatsappNumber: { type: String, unique: true },
   },
   { timestamps: true, versionKey: false }
 );

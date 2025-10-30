@@ -241,51 +241,5 @@ function extractRoleFromAccount(account: Account | null): string | null {
   return null;
 }
 
-// Enhanced auth guard utilities
-// export class AuthGuard {
-//   static async requireAuth() {
-//     const { getServerSession } = await import("next-auth");
-//     const session = await getServerSession(authOptions);
-
-//     if (!session) {
-//       throw new Error("Authentication required");
-//     }
-
-//     return session;
-//   }
-
-//   static async requireRole(requiredRole: string | string[]) {
-//     const session = await this.requireAuth();
-//     const userRole = session.user.role;
-//     const requiredRoles = Array.isArray(requiredRole)
-//       ? requiredRole
-//       : [requiredRole];
-
-//     if (!requiredRoles.includes(userRole as string)) {
-//       throw new Error(
-//         `Insufficient permissions. Required role: ${requiredRoles.join(", ")}`
-//       );
-//     }
-
-//     return session;
-//   }
-
-//   static async getUserFromToken(token: string) {
-//     const { decode } = await import("next-auth/jwt");
-//     const secret = process.env.NEXTAUTH_SECRET;
-
-//     if (!secret) {
-//       throw new Error("NEXTAUTH_SECRET is not defined");
-//     }
-
-//     const decoded = await decode({
-//       token,
-//       secret,
-//     });
-
-//     return decoded;
-//   }
-// }
-
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
