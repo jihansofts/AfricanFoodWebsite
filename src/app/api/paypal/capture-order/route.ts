@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       | "premium"
       | "enterprise";
 
-    await UserModel.findByIdAndUpdate(
+    const user = await UserModel.findByIdAndUpdate(
       userId,
       {
         $set: {
@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       },
       { new: true, runValidators: true }
     );
+    console.log(user, newLimits[pkg]);
 
     return NextResponse.json({ success: true, status: capture.result.status });
   } catch (err) {

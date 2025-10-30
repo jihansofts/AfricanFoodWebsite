@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import UserModel from "@/model/UserModel";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 import ProductModel from "@/model/ProductModel";
 import cloudinary from "@/lib/cloudinary";
 
@@ -10,10 +12,15 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
     await connectDB();
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const userId = session.user.id;
 
     const productId = params.id;
-    const { userId, name, price, category, imageUrl } = await req.json();
+    const { name, price, category, imageUrl } = await req.json();
 
     // 1) Validate user & product
     const [user, product] = await Promise.all([

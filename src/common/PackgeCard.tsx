@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import Swal from "sweetalert2";
 
 type PackageKey = "standard" | "premium" | "enterprise";
 
@@ -58,8 +59,8 @@ export default function PackageCard({ userId }: { userId: string }) {
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
         currency: "USD",
       }}>
-      <div className=" w-full bg-white text-neutral-900 flex items-center justify-center ">
-        <div className="w-full max-w-6xl px-4">
+      <div className=" w-full bg-white flex items-center justify-center ">
+        <div className="w-full max-w-7xl px-4">
           {/* Header */}
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl text-[#222222] lg:text-[32px] font-sans font-bold mb-3">
@@ -72,23 +73,25 @@ export default function PackageCard({ userId }: { userId: string }) {
             {PLANS.map((plan) => (
               <div
                 key={plan.key}
-                className="bg-[#F7F7F7] lg:min-h-[400px] rounded-2xl flex flex-col justify-center items-center  ring-1 ring-black/5 p-6 md:p-8 text-center hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] transition-shadow">
-                <h4 className="text-xl font-semibold mb-6">{plan.name}</h4>
+                className="bg-[#F7F7F7]  lg:w-[400px] lg:min-h-[500px] rounded-2xl flex flex-col justify-center items-center  ring-1 ring-black/5 p-6 md:p-8 text-center hover:shadow-[0_10px_28px_rgba(0,0,0,0.12)] transition-shadow">
+                <h4 className="lg:text-[40px] md:text-[32px] text-[24px] font-sans font-semibold mb-6">
+                  {plan.name}
+                </h4>
 
-                <div className="mb-6">
-                  <div className="text-4xl md:text-5xl font-extrabold tracking-tight text-neutral-900">
+                <div className="mb-5">
+                  <div className=" md:text-[64px] sm:text-[48px] text-[32px] font-sans font-extrabold tracking-tight text-primary">
                     {plan.listings}{" "}
                     <span className="font-extrabold">Listings</span>
                   </div>
                 </div>
 
-                <div className="text-3xl md:text-4xl font-extrabold mb-6">
+                <div className="md:text-[64px] sm:text-[48px] text-[32px] font-sans font-extrabold text-primary mb-8">
                   ${plan.price.toFixed(2)}
                 </div>
 
                 <button
                   onClick={() => openFor(plan.key)}
-                  className="mx-auto inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold bg-orange-50 text-orange-600 hover:bg-orange-100 border border-orange-200">
+                  className="mx-auto inline-flex items-center justify-center rounded-full px-8 py-4 text-[24px] cursor-pointer font-semibold  text-primary hover:bg-primary hover:text-white border-2 border-primary">
                   {plan.cta}
                 </button>
               </div>
@@ -147,15 +150,27 @@ export default function PackageCard({ userId }: { userId: string }) {
                 const result = await res.json();
 
                 if (result.success) {
-                  alert(`🎉 Successfully upgraded to ${selected} plan!`);
+                  // alert(`🎉 Successfully upgraded to ${selected} plan!`);
+                  Swal.fire({
+                    icon: "success",
+                    title: `🎉 Successfully upgraded to ${selected} plan!`,
+                  });
                   close();
                 } else {
-                  alert("Payment failed. Please try again.");
+                  Swal.fire({
+                    icon: "error",
+                    title: "Payment could not be completed.",
+                    text: "Please try again.",
+                  });
                 }
               }}
               onError={(err) => {
                 console.error(err);
-                alert("Payment could not be completed.");
+                Swal.fire({
+                  icon: "error",
+                  title: "Payment could not be completed.",
+                  text: "Please try again.",
+                });
               }}
             />
 

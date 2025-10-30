@@ -89,7 +89,7 @@ export default function LoginModal({
 
       // ✅ Redirect based on role
       if (data.user?.role === "vendor") {
-        window.location.href = "/create-product-vendor";
+        window.location.href = "/vendor/create-product-vendor";
       } else {
         window.location.href = "/";
       }

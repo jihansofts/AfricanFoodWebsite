@@ -5,9 +5,8 @@ import Image from "next/image";
 import InputBox from "@/common/InputBox";
 import { signIn } from "next-auth/react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import Link from "next/link";
+
 import Swal from "sweetalert2";
-import LoginModal from "@/common/LoginModel";
 
 // Mapping account type to image, label, button text, and button URL
 const accountData = {

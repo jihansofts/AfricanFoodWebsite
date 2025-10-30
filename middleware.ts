@@ -25,7 +25,7 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/vendor")) {
     if (!token) {
       // Not logged in → redirect to login page
-      return NextResponse.redirect(new URL("/create-product-vendor", req.url));
+      return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
     if (token.role !== "vendor") {

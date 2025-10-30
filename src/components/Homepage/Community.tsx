@@ -18,7 +18,6 @@ export default function Community() {
   console.log("user", user);
   const role = user?.role;
 
-
   // ✅ Role-based dynamic links
   const data: CommunityProps[] = [
     {
@@ -26,10 +25,7 @@ export default function Community() {
       image: "/images/community1.png",
       title: "Join Our Platform",
       desc: "Join us to share authentic African flavors, connect with food lovers, and grow your culinary journey.",
-      btn:
-        role === "castomar"
-          ? `${user?.name}`
-          : "Join Our Platform",
+      btn: role === "castomar" ? `${user?.name}` : "Join Our Platform",
       link:
         role === "castomar"
           ? "join-platform" // no link, will show name instead
@@ -92,21 +88,23 @@ export default function Community() {
 
                 <div className="mt-auto pt-4">
                   {/* 🧠 Role-based button display */}
-                  {item.id === 1 && role === "castomar" ? (
-                    // show name instead of button
-                    <p className="text-[18px] font-semibold text-primary">
-                      {user?.name || "Welcome User"}
-                    </p>
-                  ) : (
-                    <Link
-                      href={item.link || "#"}
-                      target={item.id === 3 ? "_blank" : "_self"}>
+                  {item && role === "castomar" ? (
+                    <Link href={item.link || "#"}>
                       <button
                         className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
                         transition-all duration-200 text-background font-semibold 
                         hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
                         {item.btn}
                       </button>
+                    </Link>
+                  ) : (
+                    // show name instead of button
+                    <Link
+                      href={item.link || "#"}
+                      className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
+                      transition-all duration-200 text-background font-semibold 
+                      hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                      {item.btn}
                     </Link>
                   )}
                 </div>

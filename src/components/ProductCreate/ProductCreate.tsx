@@ -1,22 +1,13 @@
 "use client";
-import Image from "next/image";
-import React, { useState } from "react";
-import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
+import React, { useRef, useState } from "react";
 import { IoImageOutline } from "react-icons/io5";
+import { IProduct } from "@/model/ProductModel";
 import PackgeCard from "@/common/PackgeCard";
 import { useAuth } from "@/context/AuthContext";
+import ProductCard from "./ProductList";
+import Swal from "sweetalert2";
 
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  rating: number;
-  jerkImage?: string;
-  jerkTitle?: string;
-}
-
-interface Form {
+export interface Form {
   id: number;
   name: string;
   price: number;
@@ -29,35 +20,10 @@ export default function ProductCreate() {
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
     "list"
   );
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      title: "Garri",
-      jerkImage: "/images/foodcategory/pandg.png",
-      jerkTitle: "59 Jerk",
-      image: "/images/foodcategory/bestsale/c3best1.png",
-      rating: 5,
-      price: 5.0,
-    },
-    {
-      id: 2,
-      title: "Yams",
-      jerkImage: "/images/foodcategory/pandg.png",
-      jerkTitle: "59 Jerk",
-      image: "/images/foodcategory/bestsale/c3best2.jpg",
-      rating: 5,
-      price: 5.0,
-    },
-    {
-      id: 3,
-      title: "Banku & Palm Soup",
-      jerkImage: "/images/foodcategory/pandg.png",
-      jerkTitle: "59 Jerk",
-      image: "/images/foodcategory/bestsale/c3best3.jpg",
-      rating: 5,
-      price: 5.0,
-    },
-  ]);
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [base64String, setBase64String] = React.useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const [newProduct, setNewProduct] = useState<Form>({
     id: 0,
@@ -66,59 +32,67 @@ export default function ProductCreate() {
     image: "",
     name: "",
   });
-
-  const handleAddProduct = async () => {
-    if (!newProduct.name || !newProduct.price) return;
-
-    const responsive = await fetch("/api/products", {
-      method: "POST",
-      body: JSON.stringify(newProduct),
-    });
-
-    const data = await responsive.json();
-
-    const productToAdd: Product = {
-      id: data.id,
-      title: newProduct.name,
-      price: newProduct.price,
-      image: newProduct.image || "/images/foodcategory/bestsale/c3best1.png",
-      rating: 5,
-    };
-
-    setProducts([...products, productToAdd]);
-
-    setNewProduct({
-      id: 0,
-      name: "",
-      category: "Nigerian",
-      price: 0,
-      image: "",
-    });
-    setActiveTab("listed");
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64String(reader.result as string);
+      };
+      reader.readAsDataURL(file); // Converts file to Base64
+    }
   };
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+  const handleAddProduct = async () => {
+    if (!newProduct.name || !newProduct.price || !newProduct.category) {
+      Swal.fire("Error", "Please fill in all required fields", "error");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await fetch("/api/products/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newProduct.name,
+          price: newProduct.price,
+          category: newProduct.category,
+          imageUrl: base64String,
+        }),
+      });
+      const data = await response.json();
+      setLoading(false);
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <FaStar key={`full-${i}`} className="text-[#FFA319] size-[20px]" />
-      );
+      if (!response.ok) {
+        Swal.fire("Error", data.error || "Failed to add product", "error");
+        return;
+      }
+
+      // update UI
+      setProducts((prev) => [...prev, data.product]);
+
+      // reset form
+      setNewProduct({
+        id: 0,
+        name: "",
+        category: "Nigerian",
+        price: 0,
+        image: "",
+      });
+
+      setActiveTab("listed");
+      Swal.fire("Success", "Product added successfully", "success");
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error adding product:", error);
+      Swal.fire("Error", "Failed to add product", "error");
     }
-    if (halfStar) {
-      stars.push(
-        <FaStarHalfAlt key="half" className="text-[#FFA319] size-[20px]" />
-      );
-    }
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <FaRegStar key={`empty-${i}`} className="text-[#FFA319] size-[20px]" />
-      );
-    }
-    return stars;
   };
 
   return (
@@ -173,7 +147,7 @@ export default function ProductCreate() {
                   className="w-full border py-3 px-2 rounded border-gray-200 outline-0">
                   <option value="Nigerian">Nigerian</option>
                   <option value="Ghanaian">Ghanaian</option>
-                  <option value="Others">Others</option>
+                  <option value="AfricanGroceries">AfricanGroceries</option>
                 </select>
               </div>
               <div className="space-y-2">
@@ -206,14 +180,18 @@ export default function ProductCreate() {
               <button
                 onClick={handleAddProduct}
                 className="bg-primary w-full text-white px-6 py-2 rounded-full font-sans font-semibold text-lg">
-                Add Product
+                {loading ? "Adding..." : "Add Product"}
               </button>
             </div>
-            <div className="border-[3px] border-spacing-6 bg-[#FFF5F0] border-dashed border-primary flex flex-col justify-center items-center p-8 rounded-4xl">
+            <div
+              onClick={handleClick}
+              className="border-[3px] border-spacing-6 bg-[#FFF5F0] border-dashed border-primary flex flex-col justify-center items-center p-8 rounded-4xl">
               <p className="text-text text-2xl font-bold font-inter">
                 Upload Product Picture
               </p>
-              <button className="text-primary w-[90%] mt-2 py-6 border-2 border-dashed px-4 flex flex-col items-center justify-center space-y-4 rounded-2xl">
+              <button
+                type="button"
+                className="text-primary w-[90%] mt-2 py-6 border-2 border-dashed px-4 flex flex-col items-center justify-center space-y-4 rounded-2xl">
                 <IoImageOutline className="size-8" />
                 <span>
                   Drag & drop or click to{" "}
@@ -221,6 +199,14 @@ export default function ProductCreate() {
                     Upload Store’s Picture
                   </span>{" "}
                 </span>
+                <input
+                  title="Upload Profile Picture"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
               </button>
             </div>
           </div>
@@ -228,51 +214,19 @@ export default function ProductCreate() {
 
         {activeTab === "listed" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-[#F7F7F7] rounded-2xl px-6 py-8 flex flex-col items-center justify-center">
-                <div className="w-[350px] h-[230px] relative">
-                  <Image
-                    width={350}
-                    height={230}
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover rounded-2xl mb-3"
-                  />
-                  <span className="absolute top-4 right-4 bg-white text-gray-950 font-inter px-3 py-2 rounded-full text-sm">
-                    100+ Dishes
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="flex">{renderStars(product.rating)}</div>
-                </div>
-
-                <h3 className="font-semibold text-[22px] md:text-[28px] text-[#222222] font-sans mt-2">
-                  {product.title}
-                </h3>
-
-                <div className="w-full flex items-center justify-center gap-4 mt-4">
-                  <span className="text-primary lg:text-[28px] md:text-[22px] text-[16px] font-bold font-sans">
-                    {product.price.toFixed(2)} CAD
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
-                      Edit
-                    </button>
-                    <button className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {products.map((product: IProduct, index) => (
+              <ProductCard
+                key={String(product._id ?? index)} // ✅ Use product._id if available, coerced to string
+                product={product}
+                // onEdit={handleEdit}
+                // onDelete={handleDelete}
+              />
             ))}
           </div>
         )}
         {activeTab === "upgrade" && (
           <div className="text-center">
-            <PackgeCard  userId={userId as string}  />
+            <PackgeCard userId={userId as string} />
           </div>
         )}
       </div>
