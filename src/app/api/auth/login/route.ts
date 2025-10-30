@@ -47,6 +47,8 @@ export async function POST(req: Request) {
         email: user.email,
         role: user.role,
         image: user.profileImage,
+        productLimit: user.productLimit,
+        whatsappNumber: user.whatsappNumber,
       },
     });
 

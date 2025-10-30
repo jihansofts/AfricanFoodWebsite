@@ -16,6 +16,7 @@ export interface Form {
 }
 export default function ProductCreate() {
   const { user } = useAuth();
+  console.log(user, "user");
   const userId = user?.id;
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
     "list"

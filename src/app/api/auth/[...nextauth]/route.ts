@@ -57,6 +57,8 @@ export const authOptions: NextAuthOptions = {
             role: role,
             googleId: profile?.sub,
             profileImage: user.image,
+            productLimit: 3,
+            whatsappNumber: "",
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -138,13 +140,16 @@ export const authOptions: NextAuthOptions = {
           const dbUser = await UserModel.findOne({ email: token.email });
 
           if (dbUser) {
-            session.user = {
+            // Merge DB values into session.user and allow extra fields via casting
+            Object.assign(session.user as User, {
               id: dbUser._id?.toString(),
               name: dbUser.name,
               email: dbUser.email,
               role: dbUser.role,
               image: dbUser.profileImage,
-            };
+              productLimit: dbUser.productLimit,
+              whatsappNumber: dbUser.whatsappNumber,
+            });
           } else {
             // Fallback to token data if user not found in DB
             session.user.id = token.id;
