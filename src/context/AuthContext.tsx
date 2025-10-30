@@ -1,4 +1,6 @@
+// context/AuthContext.tsx
 "use client";
+
 import { useSession, signOut } from "next-auth/react";
 import {
   createContext,
@@ -7,7 +9,6 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import WhatsappModal from "@/common/WhatsappModal";
 
 type User = {
   id?: string;
@@ -15,7 +16,6 @@ type User = {
   email: string;
   role: string;
   image?: string;
-  whatsappNumber?: string;
 };
 
 type AuthContextType = {
@@ -25,51 +25,43 @@ type AuthContextType = {
   logout: () => void;
 };
 
+// Create context with default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
+  console.log(session?.user.id, "session");
   const [user, setUser] = useState<User | null>(null);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      const { id, name, email, role, image, whatsappNumber } =
-        session.user as User;
-
-      const u = { id, name, email, role, image, whatsappNumber };
-      setUser(u);
-      localStorage.setItem("user", JSON.stringify(u));
-
-      // ✅ Trigger WhatsApp modal only for vendors without number
-      if (role === "vendor" && !whatsappNumber) setShowModal(true);
+      const { id, name, email, role, image } = session.user as User;
+      setUser({ id, name, email, role, image });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ id, name, email, role, image })
+      );
     } else if (status === "unauthenticated") {
-      setUser(null);
-      setShowModal(false);
     } else {
       const storedUser = localStorage.getItem("user");
-      if (storedUser) setUser(JSON.parse(storedUser));
-      setShowModal(false);
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
     }
   }, [session, status]);
 
   const login = (userData: User) => {
     setUser(userData);
+    // persist user in localStorage
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    signOut();
-  };
-
-  const handleSaved = (newNumber: string) => {
-    if (user) {
-      const updated = { ...user, whatsappNumber: newNumber };
-      setUser(updated);
-      localStorage.setItem("user", JSON.stringify(updated));
-    }
+    signOut(); // calls NextAuth signOut()
   };
 
   return (
@@ -81,20 +73,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading: status === "loading",
       }}>
       {children}
-      {user?.id && (
-        <WhatsappModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          userId={user.id!}
-          onSaved={handleSaved}
-        />
-      )}
     </AuthContext.Provider>
   );
 }
 
+// Custom hook
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
   return context;
 }

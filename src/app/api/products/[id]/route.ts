@@ -79,3 +79,21 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await connectDB();
+    const productId = params.id;
+    const deleted = await ProductModel.findByIdAndDelete(productId);
+    return NextResponse.json(deleted, { status: 200 });
+  } catch (err) {
+    console.error("Product delete error:", err);
+    return NextResponse.json(
+      { error: "Failed to delete product", details: err },
+      { status: 500 }
+    );
+  }
+}

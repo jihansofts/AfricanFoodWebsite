@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import UserModel from "@/model/UserModel";
+
 import ProductModel from "@/model/ProductModel";
-import cloudinary from "@/lib/cloudinary";
-import { authOptions } from "../../auth/[...nextauth]/route";
+
 
 export async function GET(req: Request) {
   try {
