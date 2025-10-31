@@ -112,9 +112,10 @@ export default function ProductCreate() {
       Swal.fire("Error", "Failed to add product", "error");
     }
   };
-  const handileEditProduct = async (id: string) => {
+  const handileEditProduct = async (product: IProduct) => {
     try {
       setLoading(true);
+      const id = String(product._id);
       const response = await fetch(`/api/products/${id}`, {
         method: "PUT",
         headers: {
@@ -131,15 +132,14 @@ export default function ProductCreate() {
       setLoading(false);
 
       if (!response.ok) {
-        Swal.fire("Error", data.error || "Failed to add product", "error");
+        Swal.fire("Error", data.error || "Failed to update product", "error");
         return;
       }
       // update UI
       setProducts((prev) =>
-        prev.map((product) => (product._id === id ? data.product : product))
+        prev.map((p) => (String(p._id) === id ? data.product : p))
       );
       setActiveTab("listed");
-      setLoading(false);
       Swal.fire("Success", "Product updated successfully", "success");
     } catch (error) {
       setLoading(false);
