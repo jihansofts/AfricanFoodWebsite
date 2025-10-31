@@ -1,16 +1,83 @@
 "use client";
-import FoodCategoryCard from "@/common/FoodCategoryCard";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { datas } from "@/lib/data";
+import { Category, Product } from "@/types";
+import {
+  fetchProducts,
+  getRandomProducts,
+  getProductsByCategory,
+} from "@/lib/api";
+import FoodCategoryCard from "@/common/FoodCategoryCard";
+
+export const categoryData: Omit<
+  Category,
+  "bestSaleing" | "topRated" | "FetureProducts"
+>[] = [
+  {
+    id: 1,
+    category: "Nigerian",
+    subTitle:
+      "Nigerian food is rich, colorful, and deeply tied to tradition, offering bold flavors and hearty meals.",
+    image: "/images/foodcategory/category1.png",
+    batch: "100+ Dishes",
+  },
+  {
+    id: 2,
+    category: "Ghanaian",
+    subTitle:
+      "Ghanaian food is rich, colorful, and deeply tied to tradition, offering bold flavors and hearty meals.",
+    image: "/images/foodcategory/category2.jpg",
+    batch: "100+ Dishes",
+  },
+  {
+    id: 3,
+    category: "AfricanGroceries",
+    subTitle:
+      "African groceries bring you authentic spices, staples, and flavors straight from the continent.",
+    image: "/images/foodcategory/category3.jpg",
+    batch: "100+ Dishes",
+  },
+];
 
 export default function FoodCategory() {
   const [page, setPage] = useState(0);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const visibleCount = 3;
-  const totalPages = Math.ceil(datas.length / visibleCount);
+  const totalPages = Math.ceil(categoryData.length / visibleCount);
 
   const isPrevDisabled = totalPages <= 1 || page === 0;
   const isNextDisabled = totalPages <= 1 || page === totalPages - 1;
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true);
+      const fetchedProducts = await fetchProducts();
+      setProducts(fetchedProducts);
+
+      // Enhance categories with products
+      const enhancedCategories = categoryData.map((cat) => {
+        const categoryProducts = getProductsByCategory(
+          fetchedProducts,
+          cat.category
+        );
+
+        return {
+          ...cat,
+          bestSaleing: getRandomProducts(categoryProducts, 6), // 6 random products for best selling
+          topRated: getRandomProducts(categoryProducts, 6), // 6 random products for top rated
+          FetureProducts: categoryProducts, // All products for featured
+        };
+      });
+
+      setCategories(enhancedCategories);
+      setLoading(false);
+    };
+
+    loadProducts();
+  }, []);
 
   const handlePrev = () => {
     if (isPrevDisabled) return;
@@ -23,7 +90,24 @@ export default function FoodCategory() {
   };
 
   const startIndex = page * visibleCount;
-  const currentDatas = datas.slice(startIndex, startIndex + visibleCount);
+  const currentCategories = categories.slice(
+    startIndex,
+    startIndex + visibleCount
+  );
+
+  if (loading) {
+    return (
+      <section id="recipes" className="bg-background">
+        <div className="container mx-auto p-4">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg text-text">
+              Loading delicious African cuisine...
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="recipes" className="bg-background">
@@ -40,8 +124,9 @@ export default function FoodCategory() {
               className={`p-3 rounded-full border transition-all duration-200 ${
                 isPrevDisabled
                   ? "opacity-30 cursor-not-allowed border-primary text-primary"
-                  : "cursor-pointer border-primary text-white bg-primary hover:text-white"
-              }`}>
+                  : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
+              }`}
+            >
               <IoIosArrowBack className="size-5" />
             </button>
 
@@ -56,14 +141,15 @@ export default function FoodCategory() {
               className={`p-3 rounded-full border transition-all duration-200 ${
                 isNextDisabled
                   ? "opacity-30 cursor-not-allowed border-primary text-primary"
-                  : "cursor-pointer border-primary text-white bg-primary hover:text-white"
-              }`}>
+                  : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
+              }`}
+            >
               <IoIosArrowForward className="size-5" />
             </button>
           </div>
         </div>
         <div className="mt-8 transition-opacity duration-300">
-          <FoodCategoryCard datas={currentDatas} />
+          <FoodCategoryCard datas={currentCategories} />
         </div>
       </div>
     </section>

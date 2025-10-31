@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { IProduct } from "@/model/ProductModel";
@@ -16,7 +17,7 @@ const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
         <Image
           width={350}
           height={230}
-          src={product.imageUrl}
+          src={product.imageUrl || "/placeholder-image.jpg"}
           alt={product.name}
           className="w-full h-full object-cover rounded-2xl mb-3"
         />
@@ -46,12 +47,14 @@ const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => onEdit?.(product)}
-            className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+            className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition"
+          >
             Edit
           </button>
           <button
             onClick={() => onDelete?.(product)}
-            className="py-3 px-6 border-2 border-primary font-semibold text-primary rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+            className="py-3 px-6 border-2 border-red-500 font-semibold text-red-500 rounded-full lg:text-[16px] md:text-[14px] text-[12px] font-inter cursor-pointer hover:bg-red-500 hover:text-white transition"
+          >
             Delete
           </button>
         </div>

@@ -6,7 +6,32 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import ProductModel from "@/model/ProductModel";
 import cloudinary from "@/lib/cloudinary";
 
-// Updates selected fields. If imageUrl is a base64 string, it's uploaded to Cloudinary.
+// GET single product
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await connectDB();
+    const productId = params.id;
+
+    const product = await ProductModel.findById(productId);
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(product, { status: 200 });
+  } catch (err) {
+    console.error("Product fetch error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch product", details: err },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update product
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
@@ -14,15 +39,16 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
     await connectDB();
+
     if (!session || !session.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = session.user.id;
 
+    const userId = session.user.id;
     const productId = params.id;
     const { name, price, category, imageUrl } = await req.json();
 
-    // 1) Validate user & product
+    // Validate user & product
     const [user, product] = await Promise.all([
       UserModel.findById(userId),
       ProductModel.findById(productId),
@@ -34,26 +60,29 @@ export async function PATCH(
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+
     // Only the owner (vendor) can update
     if (product.vendorId.toString() !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // 2) If a new image is provided and it's not already a URL, upload to Cloudinary
+    // Handle image upload if new image is provided
     let newImageUrl: string | undefined = undefined;
     if (typeof imageUrl === "string" && imageUrl.length) {
-      if (!imageUrl.startsWith("http")) {
+      if (imageUrl.startsWith("data:image")) {
+        // It's a base64 image, upload to Cloudinary
         const upload = await cloudinary.uploader.upload(imageUrl, {
           folder: "product_images",
         });
         newImageUrl = upload.secure_url;
-      } else {
-        newImageUrl = imageUrl; // already a hosted URL
+      } else if (imageUrl.startsWith("http")) {
+        // It's already a URL, use as is
+        newImageUrl = imageUrl;
       }
     }
 
-    // 3) Build an update object with only provided fields
-    const update: Record<string, string> = {};
+    // Build update object
+    const update: Record<string, any> = {};
     if (typeof name !== "undefined") update.name = name;
     if (typeof price !== "undefined") update.price = price;
     if (typeof category !== "undefined") update.category = category;
@@ -66,11 +95,13 @@ export async function PATCH(
       );
     }
 
-    const updated = await ProductModel.findByIdAndUpdate(productId, update, {
-      new: true,
-    });
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productId,
+      update,
+      { new: true }
+    );
 
-    return NextResponse.json(updated, { status: 200 });
+    return NextResponse.json(updatedProduct, { status: 200 });
   } catch (err) {
     console.error("Product update error:", err);
     return NextResponse.json(
@@ -80,15 +111,38 @@ export async function PATCH(
   }
 }
 
+// DELETE product
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
     await connectDB();
+
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
     const productId = params.id;
-    const deleted = await ProductModel.findByIdAndDelete(productId);
-    return NextResponse.json(deleted, { status: 200 });
+
+    // Check if product exists and user owns it
+    const product = await ProductModel.findById(productId);
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    if (product.vendorId.toString() !== userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+
+    return NextResponse.json(
+      { message: "Product deleted successfully", product: deletedProduct },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Product delete error:", err);
     return NextResponse.json(
