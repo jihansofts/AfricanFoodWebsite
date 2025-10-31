@@ -44,7 +44,7 @@ export default function RegisterPage({
   // Google Sign In
   const handleGoogleSignIn = () => {
     const role = accountType === "vendor" ? "vendor" : "customer";
-    const callbackUrl = `${window.location.origin}/?role=${role}`;
+    const callbackUrl = `/vendor/create-product-vendor${`?role=${role}`}`;
     signIn("google", { callbackUrl });
   };
 

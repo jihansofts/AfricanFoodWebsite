@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoImageOutline } from "react-icons/io5";
 import { IProduct } from "@/model/ProductModel";
 import PackgeCard from "@/common/PackgeCard";
@@ -16,12 +16,12 @@ export interface Form {
 }
 export default function ProductCreate() {
   const { user } = useAuth();
-  console.log(user, "user");
   const userId = user?.id;
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
     "list"
   );
   const [products, setProducts] = useState<IProduct[]>([]);
+  console.log("products", products);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [base64String, setBase64String] = React.useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -46,6 +46,23 @@ export default function ProductCreate() {
       reader.readAsDataURL(file); // Converts file to Base64
     }
   };
+  useEffect(() => {
+    if (user && !loading && userId) {
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch(`/api/products/get?${userId}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            setProducts(data.products);
+          }
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      };
+      fetchProducts();
+    }
+  }, [user, loading, userId]);
 
   const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category) {
@@ -93,6 +110,41 @@ export default function ProductCreate() {
       setLoading(false);
       console.error("Error adding product:", error);
       Swal.fire("Error", "Failed to add product", "error");
+    }
+  };
+  const handileEditProduct = async (id: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newProduct.name,
+          price: newProduct.price,
+          category: newProduct.category,
+          imageUrl: base64String,
+        }),
+      });
+      const data = await response.json();
+      setLoading(false);
+
+      if (!response.ok) {
+        Swal.fire("Error", data.error || "Failed to add product", "error");
+        return;
+      }
+      // update UI
+      setProducts((prev) =>
+        prev.map((product) => (product._id === id ? data.product : product))
+      );
+      setActiveTab("listed");
+      setLoading(false);
+      Swal.fire("Success", "Product updated successfully", "success");
+    } catch (error) {
+      setLoading(false);
+      console.error("Error updating product:", error);
+      Swal.fire("Error", "Failed to update product", "error");
     }
   };
 
@@ -219,7 +271,7 @@ export default function ProductCreate() {
               <ProductCard
                 key={String(product._id ?? index)} // ✅ Use product._id if available, coerced to string
                 product={product}
-                // onEdit={handleEdit}
+                onEdit={handileEditProduct}
                 // onDelete={handleDelete}
               />
             ))}

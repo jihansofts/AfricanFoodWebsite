@@ -57,6 +57,7 @@ export default function LoginModal({
       });
 
       const data = await res.json();
+      localStorage.setItem("user", data.user);
 
       if (!res.ok || data.error) {
         Swal.fire({
