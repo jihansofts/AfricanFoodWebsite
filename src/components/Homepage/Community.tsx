@@ -15,7 +15,6 @@ interface CommunityProps {
 
 export default function Community() {
   const { user } = useAuth();
-  console.log("user", user);
   const role = user?.role;
 
   // ✅ Role-based dynamic links

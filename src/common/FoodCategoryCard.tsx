@@ -16,10 +16,9 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-6">
         {datas.map((item, index) => (
           <div
-            key={item.id}
+            key={index}
             onClick={() => setSelectedCategory(item)}
-            className="relative w-full h-[600px] rounded-3xl bg-[#F7F7F7] cursor-pointer group overflow-hidden transition-all duration-300 hover:shadow-2xl"
-          >
+            className="relative w-full h-[600px] rounded-3xl bg-[#F7F7F7] cursor-pointer group overflow-hidden transition-all duration-300 hover:shadow-2xl">
             {/* Category Title - Shows when not selected */}
             {selectedCategory.id !== item.id && (
               <h2 className="text-[24px] md:text-[28px] lg:text-[32px] font-semibold text-text mb-2 transition-all duration-500 group-hover:opacity-0 relative z-10 mx-4 my-2 group-hover:mx-0 group-hover:my-0">
@@ -32,8 +31,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                 selectedCategory.id === item.id
                   ? "absolute inset-0 h-full w-full rounded-3xl"
                   : "h-[490px] group-hover:absolute group-hover:inset-0 group-hover:h-full group-hover:w-full group-hover:rounded-3xl mx-4 my-2 group-hover:mx-0 group-hover:my-0"
-              }`}
-            >
+              }`}>
               <Image
                 fill
                 src={item.image}
@@ -47,8 +45,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                   selectedCategory.id === item.id
                     ? "opacity-100"
                     : "opacity-0 group-hover:opacity-100"
-                }`}
-              ></div>
+                }`}></div>
 
               {/* Content */}
               <div
@@ -56,8 +53,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                   selectedCategory.id === item.id
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0"
-                }`}
-              >
+                }`}>
                 <h3 className="text-white text-[24px] md:text-[28px] lg:text-[32px] font-semibold mb-2">
                   {item.category}
                 </h3>
@@ -72,8 +68,7 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
                   selectedCategory.id === item.id
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0"
-                }`}
-              >
+                }`}>
                 {item.batch}
               </span>
 
@@ -89,29 +84,36 @@ export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
       </div>
 
       {/* Product Sections for Selected Category */}
-      {selectedCategory.bestSaleing.length > 0 && (
-        <FoodCard
-          datas={selectedCategory.bestSaleing}
-          titleblack="Best"
-          titleorange=" Selling"
-        />
-      )}
+      <div className="py-10">
+        {selectedCategory.bestSaleing.length > 0 && (
+          <FoodCard
+            datas={selectedCategory.bestSaleing}
+            titleblack="Best"
+            titleorange=" Selling"
+          />
+        )}
 
-      {selectedCategory.topRated.length > 0 && (
-        <FoodCard
-          datas={selectedCategory.topRated}
-          titleblack="Top"
-          titleorange=" Rated"
-        />
-      )}
+        {selectedCategory.topRated.length > 0 && (
+          <FoodCard
+            datas={selectedCategory.topRated}
+            titleblack="Top"
+            titleorange=" Rated"
+          />
+        )}
 
-      {selectedCategory.FetureProducts.length > 0 && (
-        <FoodCard
-          datas={selectedCategory.FetureProducts}
-          titleblack="Featured"
-          titleorange=" Products"
-        />
-      )}
+        {selectedCategory.FetureProducts.length > 0 && (
+          <FoodCard
+            datas={selectedCategory.FetureProducts}
+            titleblack="Featured"
+            titleorange=" Products"
+          />
+        )}
+        <div className="flex justify-center mt-5">
+          <button className="text-[16px] font-inter text-white bg-primary text-center  py-3 px-12 mt-4 rounded-4xl">
+            See All Cuisines
+          </button>
+        </div>
+      </div>
     </>
   );
 }

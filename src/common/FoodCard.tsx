@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import type { Product } from "@/types";
 import Image from "next/image";
-import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 interface FoodCardProps {
@@ -73,8 +73,7 @@ export default function FoodCard({
                 isPrevDisabled
                   ? "opacity-50 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}
-            >
+              }`}>
               <IoIosArrowBack className="size-5" />
             </button>
 
@@ -90,8 +89,7 @@ export default function FoodCard({
                 isNextDisabled
                   ? "opacity-50 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}
-            >
+              }`}>
               <IoIosArrowForward className="size-5" />
             </button>
           </div>
@@ -106,15 +104,13 @@ export default function FoodCard({
               ? "-translate-x-4 opacity-0"
               : "translate-x-0 opacity-100"
           }`}
-          onTransitionEnd={() => setSlideDirection("none")}
-        >
+          onTransitionEnd={() => setSlideDirection("none")}>
           {currentDatas.map((product) => {
             const rating = getRandomRating(product);
             return (
               <div
                 key={product._id}
-                className="bg-[#F7F7F7] rounded-3xl px-6 py-2 2xl:py-6 flex flex-col items-center justify-center"
-              >
+                className="bg-[#F7F7F7] rounded-3xl px-6 py-2 2xl:py-6 flex flex-col items-center justify-center">
                 <div className="w-full h-[250px] relative mb-4">
                   <Image
                     fill
@@ -143,7 +139,7 @@ export default function FoodCard({
                     ${product.price.toFixed(2)} CAD
                   </span>
                   <button className="lg:py-4 md:py-3 py-2 lg:px-5 md:px-4 px-3 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
-                    Add To Cart
+                    Add to Cart
                   </button>
                 </div>
               </div>

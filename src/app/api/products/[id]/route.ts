@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import UserModel from "@/model/UserModel";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
-import ProductModel from "@/model/ProductModel";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import ProductModel, { IProduct } from "@/model/ProductModel";
 import cloudinary from "@/lib/cloudinary";
 
 // GET single product
@@ -13,7 +13,7 @@ export async function GET(
 ) {
   try {
     await connectDB();
-    const productId = params.id;
+    const productId = params.id as string;
 
     const product = await ProductModel.findById(productId);
 
@@ -32,6 +32,7 @@ export async function GET(
 }
 
 // PATCH - Update product
+
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
@@ -82,7 +83,7 @@ export async function PATCH(
     }
 
     // Build update object
-    const update: Record<string, any> = {};
+    const update: Partial<IProduct> = {};
     if (typeof name !== "undefined") update.name = name;
     if (typeof price !== "undefined") update.price = price;
     if (typeof category !== "undefined") update.category = category;

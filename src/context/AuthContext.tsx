@@ -16,9 +16,8 @@ type User = {
   role: string;
   image?: string;
   whatsappNumber?: string;
+  productLimit?: number;
 };
-
-
 
 type AuthContextType = {
   user: User | null;
@@ -47,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedUser = localStorage.getItem("user");
       const existingUser = storedUser ? JSON.parse(storedUser) : {};
 
-      const { id, name, email, role, image, whatsappNumber } =
+      const { id, name, email, role, image, whatsappNumber, productLimit } =
         session.user as User;
 
       // 🧠 Merge local + session data (local has priority for WhatsApp number)
@@ -59,9 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role,
         image,
         whatsappNumber: existingUser.whatsappNumber || whatsappNumber || "",
+        productLimit: existingUser.productLimit || productLimit || 3,
       };
 
       setUser(mergedUser);
+
       localStorage.setItem("user", JSON.stringify(mergedUser));
 
       // ✅ Show WhatsApp modal only for vendors without number
@@ -106,8 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    signOut({ redirect: false });
-    window.location.href = "/";
+    signOut({ redirect: true, callbackUrl: "/" });
   };
 
   // ✅ After saving WhatsApp number

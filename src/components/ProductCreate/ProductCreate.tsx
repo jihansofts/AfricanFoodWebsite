@@ -18,6 +18,7 @@ export interface Form {
 
 export default function ProductCreate() {
   const { user } = useAuth();
+  console.log(user, "user");
   const userId = user?.id;
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
     "list"
@@ -235,7 +236,7 @@ export default function ProductCreate() {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#f4a405",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     });
@@ -288,8 +289,7 @@ export default function ProductCreate() {
               activeTab === "list"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}
-          >
+            }`}>
             {isEditing ? "Edit Product" : "Add Products"}
           </button>
           <button
@@ -298,8 +298,7 @@ export default function ProductCreate() {
               activeTab === "listed"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}
-          >
+            }`}>
             Listed Products
           </button>
           <button
@@ -308,8 +307,7 @@ export default function ProductCreate() {
               activeTab === "upgrade"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}
-          >
+            }`}>
             Upgrade Package
           </button>
         </div>
@@ -317,9 +315,18 @@ export default function ProductCreate() {
         {activeTab === "list" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h2 className="text-[24px] font-sans font-blod text-[#222222]">
-                {isEditing ? "Edit Product Details" : "Provide Details"}
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-[24px] font-sans font-extrabold text-[#222222]">
+                  {isEditing
+                    ? "Edit Product Details"
+                    : `Provide Details (3/${user?.productLimit})`}
+                </h2>
+                <span
+                  onClick={() => setActiveTab("upgrade")}
+                  className="text-[16px] cursor-pointer font-sans font-extrabold underline text-primary">
+                  Upgrade
+                </span>
+              </div>
 
               {/* Hidden product ID for editing */}
               {isEditing && editingProductId && (
@@ -331,12 +338,12 @@ export default function ProductCreate() {
                   Select Category
                 </label>
                 <select
+                  title="Select Category"
                   value={newProduct.category}
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, category: e.target.value })
                   }
-                  className="w-full border py-3 px-2 rounded border-gray-200 outline-0"
-                >
+                  className="w-full border py-3 px-2 rounded border-gray-200 outline-0">
                   <option value="Nigerian">Nigerian</option>
                   <option value="Ghanaian">Ghanaian</option>
                   <option value="AfricanGroceries">AfricanGroceries</option>
@@ -376,8 +383,7 @@ export default function ProductCreate() {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="bg-primary flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                  className="bg-primary flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed">
                   {loading
                     ? isEditing
                       ? "Updating..."
@@ -391,8 +397,7 @@ export default function ProductCreate() {
                   <button
                     onClick={handleCancelEdit}
                     disabled={loading}
-                    className="bg-gray-500 flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50"
-                  >
+                    className="bg-gray-500 flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50">
                     Cancel
                   </button>
                 )}
@@ -413,17 +418,17 @@ export default function ProductCreate() {
                     />
                     {/* Remove image button */}
                     <button
+                      type="button"
+                      title="Remove Image"
                       onClick={removeImage}
-                      className="absolute top-4 right-4 bg-white/90 hover:bg-white text-red-500 rounded-full p-2 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
+                      className="absolute top-4 right-4 bg-white/90 hover:bg-white text-red-500 rounded-full p-2 transition-all duration-200 shadow-lg hover:shadow-xl">
                       <IoClose className="size-6" />
                     </button>
                     {/* Change image overlay */}
                     <div className="absolute bottom-4 left-4 right-4">
                       <button
                         onClick={handleClick}
-                        className="w-full bg-primary/90 hover:bg-primary text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 backdrop-blur-sm"
-                      >
+                        className="w-full bg-primary/90 hover:bg-primary text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 backdrop-blur-sm">
                         Change Image
                       </button>
                     </div>
@@ -432,8 +437,7 @@ export default function ProductCreate() {
                   // Show upload area when no image
                   <div
                     onClick={handleClick}
-                    className="flex flex-col justify-center items-center p-2 min-h-[400px] cursor-pointer transition-all duration-200 hover:bg-[#FFF0E6]"
-                  >
+                    className="flex flex-col justify-center items-center p-2 min-h-[400px] cursor-pointer transition-all duration-200 hover:bg-[#FFF0E6]">
                     <div className="text-center space-y-6">
                       <div className="flex justify-center">
                         <div className="bg-primary/10 p-6 rounded-2xl">
@@ -455,8 +459,7 @@ export default function ProductCreate() {
                       <div className="pt-4">
                         <button
                           type="button"
-                          className="bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-primary/90 transition-colors"
-                        >
+                          className="bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-primary/90 transition-colors">
                           {isEditing ? "Choose New Image" : "Choose Image"}
                         </button>
                       </div>
@@ -469,6 +472,7 @@ export default function ProductCreate() {
                 )}
 
                 <input
+                  title="Upload Product Picture"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
@@ -508,13 +512,12 @@ export default function ProductCreate() {
                     No Products Listed
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    You haven't added any products yet. Start by adding your
-                    first product!
+                    You haven&apos;t added any products yet. Start by adding
+                    your first product!
                   </p>
                   <button
                     onClick={() => setActiveTab("list")}
-                    className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors"
-                  >
+                    className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors">
                     Add Your First Product
                   </button>
                 </div>
