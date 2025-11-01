@@ -4,6 +4,8 @@ import type { Product } from "@/types";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface FoodCardProps {
   datas: Product[];
@@ -16,6 +18,8 @@ export default function FoodCard({
   titleblack,
   titleorange,
 }: FoodCardProps) {
+  const { user } = useAuth();
+  console.log("user", user?.role);
   const [page, setPage] = useState(0);
   const [slideDirection, setSlideDirection] = useState<
     "left" | "right" | "none"
@@ -43,11 +47,6 @@ export default function FoodCard({
   const isNextDisabled = !hasPagination || page === totalPages - 1;
 
   // Generate random ratings for demonstration (since API doesn't provide ratings)
-  const getRandomRating = (product: Product) => {
-    // Use product ID to generate consistent random rating
-    const seed = product._id.charCodeAt(0);
-    return 3 + (seed % 20) / 10; // Ratings between 3.0 and 5.0
-  };
 
   const renderStars = () => {
     return Array.from({ length: 5 }).map((_, i) => (
@@ -106,7 +105,6 @@ export default function FoodCard({
           }`}
           onTransitionEnd={() => setSlideDirection("none")}>
           {currentDatas.map((product) => {
-            const rating = getRandomRating(product);
             return (
               <div
                 key={product._id}
@@ -134,13 +132,24 @@ export default function FoodCard({
                   {product.name}
                 </h3>
 
-                <div className="w-full flex items-center justify-center gap-4 mt-4">
+                <div className="w-full flex items-center justify-between gap-5 mt-4">
                   <span className="text-primary lg:text-[28px] md:text-[24px] text-[20px] font-bold font-sans">
                     ${product.price.toFixed(2)} CAD
                   </span>
-                  <button className="lg:py-4 md:py-3 py-2 lg:px-5 md:px-4 px-3 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
-                    Add to Cart
-                  </button>
+                  {user && product?.vendor?.whatsappNumber && (
+                    <Link
+                      href={`https://wa.me/${product.vendor.whatsappNumber.replace(
+                        /\D/g,
+                        ""
+                      )}?text=${encodeURIComponent(
+                        `Hi, I'm interested in your product "${product.name}"! 👋`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="lg:py-4 md:py-3 py-2 lg:px-8 md:px-4 px-4 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                      Vendor Contact
+                    </Link>
+                  )}
                 </div>
               </div>
             );

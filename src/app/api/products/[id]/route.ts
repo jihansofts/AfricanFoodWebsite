@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import UserModel from "@/model/UserModel";
 import { getServerSession } from "next-auth";
@@ -6,17 +6,21 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ProductModel, { IProduct } from "@/model/ProductModel";
 import cloudinary from "@/lib/cloudinary";
 
+// ✅ Helper to unwrap params for Next.js 15 compatibility
+async function getParams(context: { params: Promise<{ id: string }> }) {
+  return await context.params;
+}
+
 // GET single product
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await getParams(context);
     await connectDB();
-    const productId = params.id as string;
 
-    const product = await ProductModel.findById(productId);
-
+    const product = await ProductModel.findById(id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -32,10 +36,9 @@ export async function GET(
 }
 
 // PATCH - Update product
-
 export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -45,49 +48,41 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await getParams(context);
     const userId = session.user.id;
-    const productId = params.id;
     const { name, price, category, imageUrl } = await req.json();
 
-    // Validate user & product
     const [user, product] = await Promise.all([
       UserModel.findById(userId),
-      ProductModel.findById(productId),
+      ProductModel.findById(id),
     ]);
 
-    if (!user) {
+    if (!user)
       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-    if (!product) {
+    if (!product)
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
 
-    // Only the owner (vendor) can update
     if (product.vendorId.toString() !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Handle image upload if new image is provided
     let newImageUrl: string | undefined = undefined;
     if (typeof imageUrl === "string" && imageUrl.length) {
       if (imageUrl.startsWith("data:image")) {
-        // It's a base64 image, upload to Cloudinary
         const upload = await cloudinary.uploader.upload(imageUrl, {
           folder: "product_images",
         });
         newImageUrl = upload.secure_url;
       } else if (imageUrl.startsWith("http")) {
-        // It's already a URL, use as is
         newImageUrl = imageUrl;
       }
     }
 
-    // Build update object
     const update: Partial<IProduct> = {};
-    if (typeof name !== "undefined") update.name = name;
-    if (typeof price !== "undefined") update.price = price;
-    if (typeof category !== "undefined") update.category = category;
-    if (typeof newImageUrl !== "undefined") update.imageUrl = newImageUrl;
+    if (name !== undefined) update.name = name;
+    if (price !== undefined) update.price = price;
+    if (category !== undefined) update.category = category;
+    if (newImageUrl !== undefined) update.imageUrl = newImageUrl;
 
     if (Object.keys(update).length === 0) {
       return NextResponse.json(
@@ -96,12 +91,9 @@ export async function PATCH(
       );
     }
 
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      productId,
-      update,
-      { new: true }
-    );
-
+    const updatedProduct = await ProductModel.findByIdAndUpdate(id, update, {
+      new: true,
+    });
     return NextResponse.json(updatedProduct, { status: 200 });
   } catch (err) {
     console.error("Product update error:", err);
@@ -114,8 +106,8 @@ export async function PATCH(
 
 // DELETE product
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -125,20 +117,39 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await getParams(context);
     const userId = session.user.id;
-    const productId = params.id;
 
-    // Check if product exists and user owns it
-    const product = await ProductModel.findById(productId);
+    // Find the product
+    const product = await ProductModel.findById(id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    // Check ownership
     if (product.vendorId.toString() !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+    // ✅ Delete product image from Cloudinary (if exists)
+    if (product.imageUrl) {
+      try {
+        // Cloudinary image URLs typically look like: https://res.cloudinary.com/.../upload/v12345/product_images/filename.jpg
+        // We extract the public_id to delete it properly.
+        const publicId = product.imageUrl
+          .split("/")
+          .slice(-2)
+          .join("/")
+          .split(".")[0]; // e.g. "product_images/filename"
+        await cloudinary.uploader.destroy(publicId);
+        console.log("✅ Cloudinary image deleted:", publicId);
+      } catch (cloudErr) {
+        console.error("⚠️ Cloudinary image delete failed:", cloudErr);
+      }
+    }
+
+    // Delete product from DB
+    const deletedProduct = await ProductModel.findByIdAndDelete(id);
 
     return NextResponse.json(
       { message: "Product deleted successfully", product: deletedProduct },
@@ -152,3 +163,40 @@ export async function DELETE(
     );
   }
 }
+// export async function DELETE(
+//   req: NextRequest,
+//   context: { params: Promise<{ id: string }> }
+// ) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     await connectDB();
+
+//     if (!session || !session.user?.id) {
+//       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//     }
+
+//     const { id } = await getParams(context);
+//     const userId = session.user.id;
+
+//     const product = await ProductModel.findById(id);
+//     if (!product) {
+//       return NextResponse.json({ error: "Product not found" }, { status: 404 });
+//     }
+
+//     if (product.vendorId.toString() !== userId) {
+//       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+//     }
+
+//     const deletedProduct = await ProductModel.findByIdAndDelete(id);
+//     return NextResponse.json(
+//       { message: "Product deleted successfully", product: deletedProduct },
+//       { status: 200 }
+//     );
+//   } catch (err) {
+//     console.error("Product delete error:", err);
+//     return NextResponse.json(
+//       { error: "Failed to delete product", details: err },
+//       { status: 500 }
+//     );
+//   }
+// }
