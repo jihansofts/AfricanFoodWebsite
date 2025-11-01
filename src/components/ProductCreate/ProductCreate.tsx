@@ -80,7 +80,9 @@ export default function ProductCreate() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`/api/products/get?vendorId=${userId}`);
+      const response = await fetch(
+        `/api/vendor/products/get?vendorId=${userId}`
+      );
       const data = await response.json();
       if (response.ok) {
         setProducts(data.products);
@@ -122,7 +124,7 @@ export default function ProductCreate() {
 
     try {
       setLoading(true);
-      const response = await fetch("/api/products/create", {
+      const response = await fetch("/api/vendor/products/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -193,7 +195,7 @@ export default function ProductCreate() {
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/products/${editingProductId}`, {
+      const response = await fetch(`/api/vendor/products/${editingProductId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -242,7 +244,7 @@ export default function ProductCreate() {
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`/api/products/${product._id}`, {
+        const response = await fetch(`/api/vendor/products/${product._id}`, {
           method: "DELETE",
         });
 

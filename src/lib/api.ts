@@ -1,6 +1,6 @@
 import { Product, ApiResponse } from "@/types";
 
-const API_URL = "/api/products/get";
+const API_URL = "/api/vendor/products/get";
 
 export async function fetchProducts(): Promise<Product[]> {
   try {
