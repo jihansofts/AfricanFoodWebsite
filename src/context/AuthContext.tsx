@@ -60,9 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         whatsappNumber: existingUser.whatsappNumber || whatsappNumber || "",
         productLimit: existingUser.productLimit || productLimit || 3,
       };
-
       setUser(mergedUser);
-
       localStorage.setItem("user", JSON.stringify(mergedUser));
 
       // ✅ Show WhatsApp modal only for vendors without number

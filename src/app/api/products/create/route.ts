@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const vendorId = session.user.id; // comes directly from NextAuth
     const body = await req.json();
     const { name, price, category, imageUrl } = body;
-    console.log(vendorId, "get");
+
 
     // 1️⃣ Validate input
 

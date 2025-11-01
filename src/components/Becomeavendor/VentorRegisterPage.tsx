@@ -102,6 +102,8 @@ export default function VentorRegisterPage({
         Swal.fire("Error", data.error || "Registration failed", "error");
 
       Swal.fire("Success!", "Account created successfully!", "success");
+
+      setShowModal(true);
     } catch (error) {
       Swal.fire("Error", (error as Error).message, "error");
     }
