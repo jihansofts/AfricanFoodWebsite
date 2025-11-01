@@ -108,7 +108,7 @@ export default function FoodCard({
             return (
               <div
                 key={product._id}
-                className="bg-[#F7F7F7] rounded-3xl px-6 py-2 2xl:py-6 flex flex-col items-center justify-center">
+                className="bg-[#F7F7F7] rounded-3xl px-6 py-6 flex flex-col items-center justify-center">
                 <div className="w-full h-[250px] relative mb-4">
                   <Image
                     fill

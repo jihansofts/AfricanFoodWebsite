@@ -18,7 +18,7 @@ export const categoryData: Omit<
     category: "Nigerian",
     subTitle:
       "Nigerian food is rich, colorful, and deeply tied to tradition, offering bold flavors and hearty meals.",
-    image: "/images/foodcategory/category1.png",
+    image: "/images/foodcategory/category1.jpg",
     batch: "100+ Dishes",
   },
   {

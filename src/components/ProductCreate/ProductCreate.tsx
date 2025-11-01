@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import ProductCard from "./ProductList";
 import Swal from "sweetalert2";
 import Image from "next/image";
+import { useRoleProtect } from "@/hook/useRoleProtect";
 
 export interface Form {
   id: number;
@@ -17,6 +18,7 @@ export interface Form {
 }
 
 export default function ProductCreate() {
+  useRoleProtect("vendor");
   const { user } = useAuth();
   const userId = user?.id;
   const [activeTab, setActiveTab] = useState<"list" | "listed" | "upgrade">(
@@ -36,7 +38,7 @@ export default function ProductCreate() {
     image: "",
     name: "",
   });
-
+  const token = localStorage.getItem("token");
   const handleClick = () => {
     fileInputRef.current?.click();
   };
@@ -124,10 +126,12 @@ export default function ProductCreate() {
 
     try {
       setLoading(true);
+
       const response = await fetch("/api/vendor/products/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: newProduct.name,
@@ -160,7 +164,7 @@ export default function ProductCreate() {
   const handleEditProduct = async (product: IProduct) => {
     try {
       // Fetch product details and populate form
-      const response = await fetch(`/api/products/${product._id}`);
+      const response = await fetch(`/api/vendor/products/${product._id}`);
       const productData = await response.json();
 
       if (response.ok) {
@@ -199,6 +203,7 @@ export default function ProductCreate() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: newProduct.name,
@@ -246,6 +251,10 @@ export default function ProductCreate() {
       try {
         const response = await fetch(`/api/vendor/products/${product._id}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {
@@ -290,7 +299,8 @@ export default function ProductCreate() {
               activeTab === "list"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}>
+            }`}
+          >
             {isEditing ? "Edit Product" : "Add Products"}
           </button>
           <button
@@ -299,7 +309,8 @@ export default function ProductCreate() {
               activeTab === "listed"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}>
+            }`}
+          >
             Listed Products
           </button>
           <button
@@ -308,7 +319,8 @@ export default function ProductCreate() {
               activeTab === "upgrade"
                 ? "border-b-2 border-primary text-primary"
                 : "text-gray-600"
-            }`}>
+            }`}
+          >
             Upgrade Package
           </button>
         </div>
@@ -324,7 +336,8 @@ export default function ProductCreate() {
                 </h2>
                 <span
                   onClick={() => setActiveTab("upgrade")}
-                  className="text-[16px] cursor-pointer font-sans font-extrabold underline text-primary">
+                  className="text-[16px] cursor-pointer font-sans font-extrabold underline text-primary"
+                >
                   Upgrade
                 </span>
               </div>
@@ -344,7 +357,8 @@ export default function ProductCreate() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, category: e.target.value })
                   }
-                  className="w-full border py-3 px-2 rounded border-gray-200 outline-0">
+                  className="w-full border py-3 px-2 rounded border-gray-200 outline-0"
+                >
                   <option value="Nigerian">Nigerian</option>
                   <option value="Ghanaian">Ghanaian</option>
                   <option value="AfricanGroceries">AfricanGroceries</option>
@@ -384,7 +398,8 @@ export default function ProductCreate() {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="bg-primary flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                  className="bg-primary flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   {loading
                     ? isEditing
                       ? "Updating..."
@@ -398,7 +413,8 @@ export default function ProductCreate() {
                   <button
                     onClick={handleCancelEdit}
                     disabled={loading}
-                    className="bg-gray-500 flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50">
+                    className="bg-gray-500 flex-1 text-white px-6 py-2 rounded-full font-sans font-semibold text-lg disabled:opacity-50"
+                  >
                     Cancel
                   </button>
                 )}
@@ -422,14 +438,16 @@ export default function ProductCreate() {
                       type="button"
                       title="Remove Image"
                       onClick={removeImage}
-                      className="absolute top-4 right-4 bg-white/90 hover:bg-white text-red-500 rounded-full p-2 transition-all duration-200 shadow-lg hover:shadow-xl">
+                      className="absolute top-4 right-4 bg-white/90 hover:bg-white text-red-500 rounded-full p-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
                       <IoClose className="size-6" />
                     </button>
                     {/* Change image overlay */}
                     <div className="absolute bottom-4 left-4 right-4">
                       <button
                         onClick={handleClick}
-                        className="w-full bg-primary/90 hover:bg-primary text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 backdrop-blur-sm">
+                        className="w-full bg-primary/90 hover:bg-primary text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 backdrop-blur-sm"
+                      >
                         Change Image
                       </button>
                     </div>
@@ -438,7 +456,8 @@ export default function ProductCreate() {
                   // Show upload area when no image
                   <div
                     onClick={handleClick}
-                    className="flex flex-col justify-center items-center p-2 min-h-[400px] cursor-pointer transition-all duration-200 hover:bg-[#FFF0E6]">
+                    className="flex flex-col justify-center items-center p-2 min-h-[400px] cursor-pointer transition-all duration-200 hover:bg-[#FFF0E6]"
+                  >
                     <div className="text-center space-y-6">
                       <div className="flex justify-center">
                         <div className="bg-primary/10 p-6 rounded-2xl">
@@ -460,7 +479,8 @@ export default function ProductCreate() {
                       <div className="pt-4">
                         <button
                           type="button"
-                          className="bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-primary/90 transition-colors">
+                          className="bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-primary/90 transition-colors"
+                        >
                           {isEditing ? "Choose New Image" : "Choose Image"}
                         </button>
                       </div>
@@ -518,7 +538,8 @@ export default function ProductCreate() {
                   </p>
                   <button
                     onClick={() => setActiveTab("list")}
-                    className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors">
+                    className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors"
+                  >
                     Add Your First Product
                   </button>
                 </div>

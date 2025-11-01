@@ -16,7 +16,8 @@ interface CommunityProps {
 export default function Community() {
   const { user } = useAuth();
   const role = user?.role;
-
+  const name = user?.name ?? "";
+  console.log("name", name, role);
   // ✅ Role-based dynamic links
   const data: CommunityProps[] = [
     {
@@ -24,7 +25,7 @@ export default function Community() {
       image: "/images/community1.png",
       title: "Join Our Platform",
       desc: "Join us to share authentic African flavors, connect with food lovers, and grow your culinary journey.",
-      btn: role === "castomar" ? `${user?.name}` : "Join Our Platform",
+      btn: role === "castomar" ? `${name}` : "Join Our Platform",
       link:
         role === "castomar"
           ? "join-platform" // no link, will show name instead
@@ -63,7 +64,8 @@ export default function Community() {
             <div
               key={item.id}
               className="bg-white px-7 py-8 lg:min-h-[510px] flex flex-col items-center text-center 
-                     w-full h-full rounded-2xl border border-gray-200">
+                     w-full h-full rounded-2xl border border-gray-200"
+            >
               {/* Image */}
               <div className="bg-[#FFDBCC] rounded-full p-4 flex items-center justify-center mb-6">
                 <Image
@@ -92,7 +94,8 @@ export default function Community() {
                       <button
                         className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
                         transition-all duration-200 text-background font-semibold 
-                        hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                        hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer"
+                      >
                         {item.btn}
                       </button>
                     </Link>
@@ -102,7 +105,8 @@ export default function Community() {
                       href={item.link || "#"}
                       className="px-7 py-2 text-[16px] bg-primary border-primary font-inter rounded-4xl 
                       transition-all duration-200 text-background font-semibold 
-                      hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer">
+                      hover:bg-background hover:border-primary border-2 hover:text-primary cursor-pointer"
+                    >
                       {item.btn}
                     </Link>
                   )}

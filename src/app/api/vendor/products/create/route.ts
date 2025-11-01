@@ -8,8 +8,8 @@ import { withRole } from "@/middleware/checkRole";
 export async function POST(req: Request) {
   try {
     const session = await withRole(["vendor"])(req);
-
-    // ❌ session might be a NextResponse on error — handle that first
+    console.log("session log", session);
+    // ❌ session might be a NextResponse on error — handclgle that first
     if (session instanceof NextResponse) return session;
 
     await connectDB();

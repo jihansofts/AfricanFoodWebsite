@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import { MdDone } from "react-icons/md";
 import Image from "next/image";
 import InputBox from "@/common/InputBox";
-import { signIn } from "next-auth/react";
+// import { signIn } from "next-auth/react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 import Swal from "sweetalert2";
@@ -42,11 +42,11 @@ export default function RegisterPage({
   });
 
   // Google Sign In
-  const handleGoogleSignIn = () => {
-    const role = accountType === "vendor" ? "vendor" : "customer";
-    const callbackUrl = `/vendor/create-product-vendor${`?role=${role}`}`;
-    signIn("google", { callbackUrl });
-  };
+  // const handleGoogleSignIn = () => {
+  //   const role = accountType === "vendor" ? "vendor" : "customer";
+  //   const callbackUrl = `/vendor/create-product-vendor${`?role=${role}`}`;
+  //   signIn("google", { callbackUrl });
+  // };
 
   // File Upload Handler
   const handleClick = () => {
@@ -107,6 +107,7 @@ export default function RegisterPage({
         Swal.fire("Error", data.error || "Registration failed", "error");
 
       Swal.fire("Success!", "Account created successfully!", "success");
+      setShowModal(true);
     } catch (error) {
       Swal.fire("Error", (error as Error).message, "error");
     }
@@ -134,7 +135,8 @@ export default function RegisterPage({
               {["customer", "vendor"].map((type) => (
                 <label
                   key={type}
-                  className="flex items-center gap-2 cursor-pointer">
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     value={type}
@@ -150,7 +152,8 @@ export default function RegisterPage({
                       accountType === type
                         ? "bg-primary border-primary text-white"
                         : "border-[#4E4E4E] bg-white text-transparent"
-                    }`}>
+                    }`}
+                  >
                     <MdDone />
                   </span>
 
@@ -159,7 +162,8 @@ export default function RegisterPage({
                       accountType === type
                         ? "text-primary text-[15px] font-inter font-medium"
                         : "text-[#4E4E4E] text-[15px] font-inter font-medium"
-                    }`}>
+                    }`}
+                  >
                     Become A {type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
                 </label>
@@ -167,10 +171,11 @@ export default function RegisterPage({
             </div>
 
             {/* Google Signup */}
-            <div className="space-y-8">
+            {/* <div className="space-y-8">
               <button
                 onClick={handleGoogleSignIn}
-                className="w-full border border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2">
+                className="w-full border border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2"
+              >
                 <Image
                   src="/images/google.png"
                   alt="Google Icon"
@@ -179,7 +184,7 @@ export default function RegisterPage({
                 />
                 Sign Up with Google
               </button>
-            </div>
+            </div> */}
 
             {/* Form */}
             <form className="space-y-8" onSubmit={handleSubmit}>
@@ -231,7 +236,8 @@ export default function RegisterPage({
                     checked
                       ? "bg-primary border-primary text-white"
                       : "border-[#4E4E4E] bg-white text-transparent"
-                  }`}>
+                  }`}
+                >
                   <MdDone />
                 </span>
 
@@ -240,7 +246,8 @@ export default function RegisterPage({
                     checked
                       ? "text-primary text-[15px] font-inter font-medium"
                       : "text-[#4E4E4E] text-[15px] font-inter font-medium"
-                  }`}>
+                  }`}
+                >
                   Accept Terms of Service
                 </span>
               </label>
@@ -248,7 +255,8 @@ export default function RegisterPage({
               {/* Upload */}
               <div
                 onClick={handleClick}
-                className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-10 px-6 text-center cursor-pointer hover:border-primary transition-colors">
+                className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-10 px-6 text-center cursor-pointer hover:border-primary transition-colors"
+              >
                 <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center bg-primary text-white rounded-full">
                   <FaCloudUploadAlt className="text-2xl" />
                 </div>
@@ -271,7 +279,8 @@ export default function RegisterPage({
               {/* Button */}
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center">
+                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center"
+              >
                 Registation
               </button>
             </form>
@@ -280,7 +289,8 @@ export default function RegisterPage({
               Already Have an Account?{" "}
               <button
                 onClick={() => setShowModal(true)}
-                className="text-primary cursor-pointer underline font-medium">
+                className="text-primary cursor-pointer underline font-medium"
+              >
                 Log in
               </button>
             </p>

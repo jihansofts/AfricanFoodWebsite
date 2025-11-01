@@ -1,5 +1,4 @@
 "use client";
-import { useSession, signOut } from "next-auth/react";
 import {
   createContext,
   useState,
@@ -22,76 +21,37 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (user: User) => void;
+  login: (user: User, token: string) => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  // 🧩 Load user from localStorage immediately (even before NextAuth session loads)
+  // 🧩 Load user from localStorage on first render
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser && !user) {
-      setUser(JSON.parse(storedUser));
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // Show WhatsApp modal if vendor missing number
+      if (parsedUser.role === "vendor" && !parsedUser.whatsappNumber) {
+        setShowModal(true);
+      }
     }
+    setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      const storedUser = localStorage.getItem("user");
-      const existingUser = storedUser ? JSON.parse(storedUser) : {};
-
-      const { id, name, email, role, image, whatsappNumber, productLimit } =
-        session.user as User;
-
-      // 🧠 Merge local + session data (local has priority for WhatsApp number)
-      const mergedUser = {
-        ...existingUser,
-        id,
-        name,
-        email,
-        role,
-        image,
-        whatsappNumber: existingUser.whatsappNumber || whatsappNumber || "",
-        productLimit: existingUser.productLimit || productLimit || 3,
-      };
-      setUser(mergedUser);
-      localStorage.setItem("user", JSON.stringify(mergedUser));
-
-      // ✅ Show WhatsApp modal only for vendors without number
-      if (mergedUser.role === "vendor" && !mergedUser.whatsappNumber) {
-        setShowModal(true);
-      } else {
-        setShowModal(false);
-      }
-    }
-    // 🩵 FIX: When session is unauthenticated, keep local login alive
-    else if (status === "unauthenticated") {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        setUser(parsed);
-        if (parsed.role === "vendor" && !parsed.whatsappNumber) {
-          setShowModal(true);
-        } else {
-          setShowModal(false);
-        }
-      } else {
-        setUser(null);
-        setShowModal(false);
-      }
-    }
-  }, [session, status]);
-
-  // ✅ Manual login (from API / form)
-  const login = (userData: User) => {
-    setUser(userData);
+  // ✅ Manual login (after JWT login)
+  const login = (userData: User, token: string) => {
+    localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
 
     if (userData.role === "vendor" && !userData.whatsappNumber) {
       setShowModal(true);
@@ -100,15 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // ✅ Logout clears both systems
+  // ✅ Logout
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
     localStorage.removeItem("token");
-    signOut({ redirect: true, callbackUrl: "/" });
+    localStorage.removeItem("user");
+    setUser(null);
+    setShowModal(false);
+    window.location.href = "/"; // redirect to home/login
   };
 
-  // ✅ After saving WhatsApp number
+  // ✅ Update after WhatsApp number saved
   const handleSaved = (newNumber: string) => {
     if (user) {
       const updated = { ...user, whatsappNumber: newNumber };
@@ -124,8 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         login,
         logout,
-        loading: status === "loading",
-      }}>
+        loading,
+      }}
+    >
       {children}
       {user?.role === "vendor" && (
         <WhatsappModal
