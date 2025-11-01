@@ -1,42 +1,38 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import jwt from "jsonwebtoken";
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get("token")?.value;
+  const url = req.nextUrl.clone();
 
-  const { pathname } = req.nextUrl;
+  if (!token) {
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
 
-  // ✅ Allow public routes
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/favicon.ico") ||
-    pathname === "/"
-  ) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    const pathname = req.nextUrl.pathname;
+
+    if (pathname.startsWith("/vendor") && decoded.role !== "vendor") {
+      url.pathname = "/unauthorized";
+      return NextResponse.redirect(url);
+    }
+
+    if (pathname.startsWith("/customer") && decoded.role !== "customer") {
+      url.pathname = "/unauthorized";
+      return NextResponse.redirect(url);
+    }
+
     return NextResponse.next();
+  } catch {
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
-
-  // ✅ Protect /vendor routes
-  if (pathname.startsWith("/vendor")) {
-    if (!token) {
-      // Not logged in → redirect to login page
-      return NextResponse.redirect(new URL("/auth/login", req.url));
-    }
-
-    if (token.role !== "vendor") {
-      // Logged in but not vendor → redirect to home
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/vendor/:path*"], // 👈 protects all vendor routes
+  matcher: ["/vendor/:path*", "/customer/:path*"],
 };

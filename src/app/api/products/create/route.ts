@@ -1,26 +1,28 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-
 import UserModel from "@/model/UserModel";
 import ProductModel from "@/model/ProductModel";
 import cloudinary from "@/lib/cloudinary";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { withRole } from "@/middleware/checkRole";
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await withRole(["vendor"])(req);
+
+    // ❌ session might be a NextResponse on error — handle that first
+    if (session instanceof NextResponse) return session;
+
     await connectDB();
-    if (!session || !session.user?.id) {
+
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const vendorId = session.user.id; // comes directly from NextAuth
+
+    const vendorId = session.user.id;
     const body = await req.json();
     const { name, price, category, imageUrl } = body;
 
-
     // 1️⃣ Validate input
-
     if (!vendorId || !name || !price || !category) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -73,7 +75,6 @@ export async function POST(req: Request) {
     });
 
     // 6️⃣ Decrease product limit (optional)
-    // Only decrease if you want to track remaining slots dynamically
     if (user.productLimit > 0) {
       user.productLimit -= 1;
       await user.save();
