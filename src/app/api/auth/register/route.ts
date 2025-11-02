@@ -33,6 +33,7 @@ export async function POST(req: Request) {
       role: role || "customer",
       profileImage,
       productLimit: 3,
+      whatsappNumber: "",
     });
     return NextResponse.json(
       {

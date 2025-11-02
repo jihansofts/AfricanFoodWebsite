@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 interface Props {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export default function WhatsappModal({
   if (!isOpen) return null;
 
   const handleSave = async () => {
-    if (!number.trim()) return alert("Please enter your WhatsApp number");
+    if (!number.trim()) return Swal.fire("Error", "Enter a valid number", "error");
     setLoading(true);
     const res = await fetch("/api/auth/userupdate", {
       method: "PATCH",
@@ -32,9 +33,13 @@ export default function WhatsappModal({
     if (res.ok) {
       onSaved(number);
       onClose();
-      alert("WhatsApp number saved successfully!");
+      Swal.fire("Success", "WhatsApp number saved", "success");
     } else {
-      alert(data.error || "Error saving WhatsApp number");
+      Swal.fire(
+        "Error",
+        data.error || "Failed to save WhatsApp number",
+        "error"
+      );
     }
   };
 
@@ -54,13 +59,13 @@ export default function WhatsappModal({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-gray-400">
+            className="px-4 cursor-pointer py-2 rounded-lg border border-gray-400">
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-60">
+            className="bg-primary cursor-pointer text-white px-4 py-2 rounded-lg disabled:opacity-60">
             {loading ? "Saving..." : "Save"}
           </button>
         </div>
