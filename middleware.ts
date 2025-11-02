@@ -22,13 +22,13 @@ export function middleware(req: NextRequest) {
     }
 
     if (pathname.startsWith("/customer") && decoded.role !== "customer") {
-      url.pathname = "/unauthorized";
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
 
     return NextResponse.next();
   } catch {
-    url.pathname = "/login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 }
