@@ -1,14 +1,18 @@
 "use client";
 import React, { useState } from "react";
-import type { Category } from "@/types";
+import type { Category, Product } from "@/types";
 import FoodCard from "./FoodCard";
 import Image from "next/image";
 
 interface FoodCategoryCardProps {
   datas: Category[];
+  productData: Product[];
 }
 
-export default function FoodCategoryCard({ datas }: FoodCategoryCardProps) {
+export default function FoodCategoryCard({
+  datas,
+  productData,
+}: FoodCategoryCardProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category>(datas[0]);
 
   return (

@@ -94,6 +94,7 @@ export default function Navbar(): React.ReactElement {
                 className="relative">
                 <Link
                   href={item.href || `#${item.id}`}
+                  onClick={() => handleLinkClick(item.id)}
                   className={`px-4 py-2 block 2xl:text-[16px] xl:text-[14px] md:text-[12px] sm:text-[8px] font-inter rounded-md transition-all duration-200 ${
                     activeLink === item.id
                       ? "text-primary font-bold font-inter"

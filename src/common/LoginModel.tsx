@@ -64,7 +64,7 @@ export default function LoginModal({
       }
 
       if (data.user) {
-        login(data.user);
+        login(data.user, data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
@@ -183,7 +183,7 @@ export default function LoginModal({
               {/* Footer */}
               <div className="mt-8 pt-6 border-t border-slate-200">
                 <p className="text-center text-gray-500 text-sm">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link
                     href={"/join-our-vendor"}
                     onClick={() => setShowModal(false)}

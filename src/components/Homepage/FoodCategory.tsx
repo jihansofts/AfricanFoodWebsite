@@ -125,8 +125,7 @@ export default function FoodCategory() {
                 isPrevDisabled
                   ? "opacity-30 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}
-            >
+              }`}>
               <IoIosArrowBack className="size-5" />
             </button>
 
@@ -142,14 +141,13 @@ export default function FoodCategory() {
                 isNextDisabled
                   ? "opacity-30 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}
-            >
+              }`}>
               <IoIosArrowForward className="size-5" />
             </button>
           </div>
         </div>
         <div className="mt-8 transition-opacity duration-300">
-          <FoodCategoryCard datas={currentCategories} />
+          <FoodCategoryCard datas={currentCategories} productData={products} />
         </div>
       </div>
     </section>
