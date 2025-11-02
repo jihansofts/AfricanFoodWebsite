@@ -64,9 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setUser(null);
     setShowModal(false);
-    window.location.href = "/"; // redirect to home/login
+    window.location.href = "/";
   };
 
   // ✅ Update after WhatsApp number saved

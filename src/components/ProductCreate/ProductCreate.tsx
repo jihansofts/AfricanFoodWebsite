@@ -29,6 +29,7 @@ export default function ProductCreate() {
   const [base64String, setBase64String] = React.useState<string>("");
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [userLimit, setUserLimit] = useState([]);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
 
   const [newProduct, setNewProduct] = useState<Form>({
@@ -73,7 +74,7 @@ export default function ProductCreate() {
       fileInputRef.current.value = "";
     }
   };
-
+  console.log("user data", user);
   useEffect(() => {
     if (user && !loading && userId) {
       fetchProducts();
@@ -107,6 +108,24 @@ export default function ProductCreate() {
     setEditingProductId(null);
   };
 
+  const getUserData = async (id: string) => {
+    try {
+      const response = await fetch(`/api/users?id=${userId}`);
+      const data = await response.json();
+      setUserLimit(data.user.productLimit);
+      // console.log("Response:", response.status, data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getUserData(userId);
+    }
+  }, [userId]);
+
+  console.log("data set", userLimit);
   const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category) {
       Swal.fire("Error", "Please fill in all required fields", "error");
@@ -154,6 +173,9 @@ export default function ProductCreate() {
       resetForm();
       setActiveTab("listed");
       Swal.fire("Success", "Product added successfully", "success");
+      if (userId) {
+        getUserData(userId);
+      }
     } catch (error) {
       setLoading(false);
       console.error("Error adding product:", error);
@@ -285,7 +307,6 @@ export default function ProductCreate() {
   const handleCancelEdit = () => {
     resetForm();
   };
-
   return (
     <div className="bg-background p-4">
       <div className="container mx-auto">
@@ -332,7 +353,7 @@ export default function ProductCreate() {
                 <h2 className="text-[24px] font-sans font-extrabold text-[#222222]">
                   {isEditing
                     ? "Edit Product Details"
-                    : `Provide Details (3/${user?.productLimit})`}
+                    : `Provide Details (3/${userLimit})`}
                 </h2>
                 <span
                   onClick={() => setActiveTab("upgrade")}
