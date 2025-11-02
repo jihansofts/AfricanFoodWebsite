@@ -1,19 +1,22 @@
-import { useEffect } from "react";
+"use client";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 
-export function useRoleProtect(requiredRole: string) {
+export function useRoleProtect(requiredRole?: string) {
   const router = useRouter();
-  const { user } = useAuth();
 
   useEffect(() => {
-    // ✅ Only run on client
-    if (typeof window === "undefined") return;
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
 
-    if (!user) {
+    if (!token) {
       router.push("/");
-    } else if (user.role !== requiredRole) {
-      router.push("/");
+      return;
     }
-  }, [user, router, requiredRole]);
+
+    if (requiredRole && role !== requiredRole) {
+      router.push("/");
+      return;
+    }
+  }, [router, requiredRole]);
 }

@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import ProductCard from "@/components/ProductCreate/ProductList";
 import Swal from "sweetalert2";
 import Image from "next/image";
-import { useRoleProtect } from "@/hook/useRoleProtect";
+// import { useRoleProtect } from "@/hook/useRoleProtect";
 
 export interface Form {
   id: number;
@@ -18,7 +18,7 @@ export interface Form {
 }
 
 export default function Page() {
-  useRoleProtect("vendor");
+  // useRoleProtect("vendor");
   const { user } = useAuth();
   const userId = user?.id;
 
