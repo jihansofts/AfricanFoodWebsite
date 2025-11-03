@@ -8,7 +8,6 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: UserRole;
-  googleid?: string;
   profileImage?: string;
   packaged: PackageType;
   whatsappNumber?: string;
@@ -26,10 +25,9 @@ const userSchema = new Schema<IUser>(
       default: "free",
     },
     role: { type: String, enum: ["vendor", "customer"], default: "customer" },
-    googleid: { type: String },
     profileImage: { type: String },
     productLimit: { type: Number, default: 3 },
-    whatsappNumber: { type: String, unique: true },
+    whatsappNumber: { type: String, unique: true, sparse: true },
   },
   { timestamps: true, versionKey: false }
 );

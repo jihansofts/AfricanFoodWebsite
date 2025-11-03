@@ -6,6 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+
 import WhatsappModal from "@/common/WhatsappModal";
 
 type User = {
@@ -87,8 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         loading,
-      }}
-    >
+      }}>
       {children}
       {user?.role === "vendor" && (
         <WhatsappModal
