@@ -122,7 +122,7 @@ export default function Page() {
     try {
       const response = await fetch(`/api/users?id=${userId}`);
       const data = await response.json();
-      setUserLimit(data.user.productLimit - 1);
+      setUserLimit(data.user.productLimit);
     } catch (error) {
       console.error("Error:", error);
     }

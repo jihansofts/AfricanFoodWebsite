@@ -5,7 +5,8 @@ import UserModel from "@/model/UserModel";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role, profileImage } = await req.json();
+    const { name, email, password, role, profileImage, whatsappNumber } =
+      await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
       role: role || "customer",
       profileImage,
       productLimit: 4,
-      whatsappNumber: "",
+      whatsappNumber: whatsappNumber || null,
     });
     return NextResponse.json(
       {

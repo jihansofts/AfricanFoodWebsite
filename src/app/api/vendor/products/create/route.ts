@@ -7,11 +7,9 @@ import { withRole } from "@/middleware/checkRole";
 
 export async function POST(req: Request) {
   try {
+    // ✅ Step 1: Verify session and role
     const session = await withRole(["vendor"])(req);
-    console.log("session log", session);
-    // ❌ session might be a NextResponse on error — handclgle that first
     if (session instanceof NextResponse) return session;
-
     await connectDB();
 
     if (!session?.user) {
@@ -22,7 +20,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, price, category, imageUrl } = body;
 
-    // 1️⃣ Validate input
+    // ✅ Step 2: Validate request body
     if (!vendorId || !name || !price || !category) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -30,24 +28,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2️⃣ Find user
+    // ✅ Step 3: Find vendor
     const user = await UserModel.findById(vendorId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 3️⃣ Check user’s product limit
-    const currentCount = await ProductModel.countDocuments({
-      vendorId: user._id,
-    });
-    if (currentCount >= user.productLimit) {
+    // ✅ Step 4: Check user’s product limit
+    if (user.productLimit <= 0) {
       return NextResponse.json(
-        { error: "Product limit reached. Please upgrade your package." },
+        {
+          error: "Product limit reached. Please upgrade your package.",
+          limit: user.productLimit,
+        },
         { status: 403 }
       );
     }
 
-    // 4️⃣ Upload image to Cloudinary (if needed)
+    // ✅ Step 5: Handle Cloudinary upload (if imageUrl is a base64 or local path)
     let uploadedImageUrl = imageUrl;
     if (imageUrl && !imageUrl.startsWith("http")) {
       try {
@@ -65,7 +63,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 5️⃣ Create the product
+    // ✅ Step 6: Create the product
     const product = await ProductModel.create({
       name,
       price,
@@ -74,13 +72,11 @@ export async function POST(req: Request) {
       vendorId: user._id,
     });
 
-    // 6️⃣ Decrease product limit (optional)
-    if (user.productLimit > 0) {
-      user.productLimit -= 1;
-      await user.save();
-    }
+    // ✅ Step 7: Decrease the user’s product limit by 1
+    user.productLimit -= 1;
+    await user.save();
 
-    // 7️⃣ Send response
+    // ✅ Step 8: Return response
     return NextResponse.json(
       {
         message: "Product created successfully",

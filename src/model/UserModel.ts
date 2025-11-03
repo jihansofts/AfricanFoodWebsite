@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser>(
     role: { type: String, enum: ["vendor", "customer"], default: "customer" },
     profileImage: { type: String },
     productLimit: { type: Number, default: 3 },
-    whatsappNumber: { type: String, unique: true, sparse: true },
+    whatsappNumber: { type: String },
   },
   { timestamps: true, versionKey: false }
 );
