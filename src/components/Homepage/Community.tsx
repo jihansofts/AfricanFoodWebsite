@@ -26,8 +26,11 @@ export default function Community() {
       image: "/images/community1.png",
       title: "Join Our Platform",
       desc: "Join us to share authentic African flavors, connect with food lovers, and grow your culinary journey.",
-      btn: role === "customer" ? `Welcome, ${name}` : "Join Our Platform",
-      link: role === "customer" ? "/dashboard" : "/join-platform",
+      btn:
+        role === "customer" || role === "vendor"
+          ? `Welcome, ${name}`
+          : "Join Our Platform",
+      link: role === "customer" || role === "vendor" ? "" : "/join-platform",
     },
     {
       id: 2,
