@@ -1,4 +1,3 @@
-// /app/api/paypal/create-order/route.ts
 import { paypalClient } from "@/lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
 import { NextResponse } from "next/server";
@@ -43,12 +42,10 @@ export async function POST(req: Request) {
             value: selected.price.toFixed(2),
             // (optional itemization)
           },
-          // optional line items if you want
-          // items: [{ name: `${selected.label} Package`, quantity: "1", unit_amount: { currency_code: "USD", value: selected.price.toFixed(2) } }],
         },
       ],
       application_context: {
-        brand_name: "Your Brand",
+        brand_name: "Africanfoodzones",
         user_action: "PAY_NOW",
       },
     });
@@ -63,8 +60,6 @@ export async function POST(req: Request) {
     );
   }
 }
-
-// (optional) Reject other methods
 export async function GET() {
   return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

@@ -30,10 +30,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
+  // fetch user data
+
+  // const getUserData = async (userId: string) => {
+  //   try {
+  //     const response = await fetch(`/api/users?id=${userId}`);
+  //     const data = await response.json();
+  //     if (data?.user) {
+  //       setUser(data.user);
+  //       setUserLimit(data.user.productLimit);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching user:", error);
+  //   }
+  // };
+
   // 🧩 Load user from localStorage on first render
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -52,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("role", userData.role);
     setUser(userData);
 
     if (userData.role === "vendor" && !userData.whatsappNumber) {

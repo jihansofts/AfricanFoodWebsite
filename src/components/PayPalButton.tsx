@@ -37,7 +37,6 @@ export default function PayPalButton({
               packageType,
             }),
           });
-
           const result = await res.json();
           if (result.success) {
             alert(`🎉 Successfully upgraded to ${packageType} plan!`);

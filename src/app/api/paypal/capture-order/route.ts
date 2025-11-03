@@ -1,4 +1,3 @@
-// /app/api/paypal/capture-order/route.ts
 import { paypalClient } from "@/lib/paypal";
 import paypal from "@paypal/checkout-server-sdk";
 import UserModel from "@/model/UserModel";
@@ -38,7 +37,7 @@ export async function POST(req: Request) {
       | "premium"
       | "enterprise";
 
-    const user = await UserModel.findByIdAndUpdate(
+    await UserModel.findByIdAndUpdate(
       userId,
       {
         $set: {
@@ -48,8 +47,6 @@ export async function POST(req: Request) {
       },
       { new: true, runValidators: true }
     );
-    console.log(user, newLimits[pkg]);
-
     return NextResponse.json({ success: true, status: capture.result.status });
   } catch (err) {
     console.error("Capture error:", err);
