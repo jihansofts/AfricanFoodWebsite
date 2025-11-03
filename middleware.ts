@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose"; // jose works in Edge runtime
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
-  console.log(token);
   const url = req.nextUrl.clone();
 
   if (!token) {
@@ -13,27 +12,24 @@ export function middleware(req: NextRequest) {
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const decoded: any = jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+
     const pathname = req.nextUrl.pathname;
 
-    if (pathname.startsWith("/vendor") && decoded.role !== "vendor") {
+    if (pathname.startsWith("/vendor") && payload.role !== "vendor") {
       url.pathname = "/unauthorized";
       return NextResponse.redirect(url);
     }
 
-    if (pathname.startsWith("/customer") && decoded.role !== "customer") {
-      url.pathname = "/";
-      return NextResponse.redirect(url);
-    }
-
     return NextResponse.next();
-  } catch {
+  } catch (err) {
+    console.error("JWT verification failed:", err);
     url.pathname = "/";
     return NextResponse.redirect(url);
   }
 }
 
 export const config = {
-  matcher: ["/vendor/:path*", "/customer/:path*"],
+  matcher: ["/vendor/:path*"],
 };
