@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
+  console.log(token);
   const url = req.nextUrl.clone();
 
   if (!token) {
@@ -28,11 +29,11 @@ export function middleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch {
-    url.pathname = "/login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 }
 
 export const config = {
-  matcher: ["/vendor/:path*", "/:path*"],
+  matcher: ["/vendor/:path*", "/customer/:path*"],
 };
