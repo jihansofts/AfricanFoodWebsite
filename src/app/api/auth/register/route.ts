@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       password: hashedPassword,
       role: role || "customer",
       profileImage,
-      productLimit: 4,
+      productLimit: 3,
       whatsappNumber: whatsappNumber || null,
     });
     return NextResponse.json(
