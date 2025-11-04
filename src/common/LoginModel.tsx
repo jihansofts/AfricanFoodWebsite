@@ -110,20 +110,17 @@ export default function LoginModal({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
+            exit={{ opacity: 0 }}>
             <motion.div
               className="bg-gradient-to-br from-white to-slate-50 rounded-3xl p-8 w-full max-w-md shadow-2xl relative border border-slate-200"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            >
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}>
               {/* Close Button */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all duration-200 cursor-pointer"
-              >
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all duration-200 cursor-pointer">
                 ✕
               </button>
 
@@ -164,8 +161,7 @@ export default function LoginModal({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center"
-                >
+                  className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center">
                   {isLoading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -187,8 +183,7 @@ export default function LoginModal({
                   <Link
                     href={"/join-our-vendor"}
                     onClick={() => setShowModal(false)}
-                    className="text-primary/90 hover:text-primary font-semibold underline underline-offset-2 transition-colors cursor-pointer"
-                  >
+                    className="text-primary/90 hover:text-primary font-semibold underline underline-offset-2 transition-colors cursor-pointer">
                     Sign up
                   </Link>
                 </p>
