@@ -24,6 +24,7 @@ type AuthContextType = {
   loading: boolean;
   login: (user: User, token: string) => void;
   logout: () => void;
+  requiresWhatsApp: boolean; // Add this
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,8 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [requiresWhatsApp, setRequiresWhatsApp] = useState(false); // Add this
 
   // fetch user data
+<<<<<<< HEAD
 
   // const getUserData = async (userId: string) => {
   //   try {
@@ -48,9 +51,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   //     console.error("Error fetching user:", error);
   //   }
   // };
+=======
+  const getUserData = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/users?id=${userId}`);
+      const data = await response.json();
+      if (data?.user) {
+        setWhatsappNumber(data.user.whatsappNumber);
+        // Update requiresWhatsApp based on actual data
+        if (data.user.role === "vendor" && !data.user.whatsappNumber) {
+          setRequiresWhatsApp(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+>>>>>>> origin/rezaul
 
   // 🧩 Load user from localStorage on first render
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -60,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Show WhatsApp modal if vendor missing number
       if (parsedUser.role === "vendor" && !parsedUser.whatsappNumber) {
         setShowModal(true);
+        setRequiresWhatsApp(true); // Set requirement
       }
     }
     setLoading(false);
@@ -74,8 +94,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (userData.role === "vendor" && !userData.whatsappNumber) {
       setShowModal(true);
+      setRequiresWhatsApp(true); // Set requirement
     } else {
       setShowModal(false);
+      setRequiresWhatsApp(false); // Clear requirement
     }
   };
 
@@ -86,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("role");
     setUser(null);
     setShowModal(false);
+    setRequiresWhatsApp(false); // Clear requirement
     window.location.href = "/";
   };
 
@@ -96,7 +119,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(updated);
       localStorage.setItem("user", JSON.stringify(updated));
       setShowModal(false);
+      setRequiresWhatsApp(false); // Clear requirement after saving
     }
+  };
+
+  // ✅ Handle modal close without saving
+  const handleModalClose = () => {
+    setShowModal(false);
+    // Keep requiresWhatsApp as true until number is provided
   };
 
   return (
@@ -106,12 +136,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         loading,
-      }}>
+        requiresWhatsApp,
+      }}
+    >
       {children}
-      {user?.role === "vendor" && (
+      {user?.role === "vendor" && requiresWhatsApp && (
         <WhatsappModal
           isOpen={showModal}
-          onClose={() => setShowModal(false)}
+          onClose={handleModalClose} // Use the new handler
           userId={user.id!}
           onSaved={handleSaved}
         />

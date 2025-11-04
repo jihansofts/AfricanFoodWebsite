@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { MdDone } from "react-icons/md";
 import Image from "next/image";
 import InputBox from "@/common/InputBox";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { IoCloseCircleSharp, IoCheckmarkDoneCircle } from "react-icons/io5";
+import { MdDone } from "react-icons/md";
 
 // Mapping account type to image, label, button text, and button URL
 const accountData = {
@@ -33,6 +34,7 @@ export default function VentorRegisterPage({
   const [checked, setChecked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [base64String, setBase64String] = React.useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   // Separate form data per account type
   const [formData, setFormData] = useState({
@@ -43,14 +45,36 @@ export default function VentorRegisterPage({
   const handleClick = () => {
     fileInputRef.current?.click();
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        Swal.fire("Error", "Please select an image file", "error");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire("Error", "Image size should be less than 5MB", "error");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setBase64String(reader.result as string);
       };
-      reader.readAsDataURL(file); // Converts file to Base64
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Remove uploaded image
+  const removeImage = () => {
+    setBase64String("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -63,25 +87,50 @@ export default function VentorRegisterPage({
       },
     });
   };
+
+  // Form validation
+  const validateForm = () => {
+    const { name, email, password, confirmPassword } = formData[accountType];
+
+    if (!name || !email || !password || !confirmPassword) {
+      Swal.fire("Error", "Please fill in all fields", "error");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      Swal.fire("Error", "Passwords do not match", "error");
+      return false;
+    }
+
+    if (password.length < 5) {
+      Swal.fire("Error", "Password must be at least 6 characters", "error");
+      return false;
+    }
+
+    if (!checked) {
+      Swal.fire("Error", "Please accept the Terms of Service", "error");
+      return false;
+    }
+
+    return true;
+  };
+
   // ✅ Submit Handler (Main Registration Logic)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword } = formData[accountType];
 
-    if (!name || !email || !password || !confirmPassword) return;
+    if (!validateForm()) return;
 
-    if (password !== confirmPassword) return;
-
-    if (!checked) return;
+    setLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          email,
-          password,
+          name: formData[accountType].name,
+          email: formData[accountType].email,
+          password: formData[accountType].password,
           role: accountType,
           profileImage:
             base64String ||
@@ -91,13 +140,23 @@ export default function VentorRegisterPage({
 
       const data = await res.json();
 
-      if (!res.ok)
+      if (!res.ok) {
         Swal.fire("Error", data.error || "Registration failed", "error");
+        return;
+      }
 
-      Swal.fire("Success!", "Account created successfully!", "success");
-      setShowModal(true);
+      Swal.fire({
+        title: "Success!",
+        text: "Account created successfully!",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        setShowModal(true);
+      });
     } catch (error) {
       Swal.fire("Error", (error as Error).message, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,11 +178,12 @@ export default function VentorRegisterPage({
             </p>
 
             {/* Account Type Selector */}
-            <div className="flex gap-6 mb-4">
+            <div className="flex gap-6 mb-6">
               {["customer", "vendor"].map((type) => (
                 <label
                   key={type}
-                  className="flex items-center gap-2 cursor-pointer">
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     value={type}
@@ -139,7 +199,8 @@ export default function VentorRegisterPage({
                       accountType === type
                         ? "bg-primary border-primary text-white"
                         : "border-[#4E4E4E] bg-white text-transparent"
-                    }`}>
+                    }`}
+                  >
                     <MdDone />
                   </span>
 
@@ -148,7 +209,8 @@ export default function VentorRegisterPage({
                       accountType === type
                         ? "text-primary text-[15px] font-inter font-medium"
                         : "text-[#4E4E4E] text-[15px] font-inter font-medium"
-                    }`}>
+                    }`}
+                  >
                     Become A {type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
                 </label>
@@ -156,7 +218,7 @@ export default function VentorRegisterPage({
             </div>
 
             {/* Form */}
-            <form className="space-y-8" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <InputBox
                 id="name"
                 label={accountData[accountType].label}
@@ -190,9 +252,8 @@ export default function VentorRegisterPage({
                   handleInputChange("confirmPassword", e.target.value)
                 }
               />
-
-              {/* Terms */}
-              <label className="flex items-center gap-2 cursor-pointer">
+              {/* Terms Checkbox */}
+              <label className="flex items-start gap-3 cursor-pointer mt-4">
                 <input
                   type="checkbox"
                   checked={checked}
@@ -200,36 +261,90 @@ export default function VentorRegisterPage({
                   className="hidden peer"
                 />
                 <span
-                  className={`w-[17px] h-[16px] flex items-center justify-center rounded-sm border transition-all ${
+                  className={`w-[17px] h-[16px] flex items-center justify-center rounded-sm border transition-all flex-shrink-0 mt-0.5 ${
                     checked
                       ? "bg-primary border-primary text-white"
                       : "border-[#4E4E4E] bg-white text-transparent"
-                  }`}>
+                  }`}
+                >
                   <MdDone />
                 </span>
                 <span
-                  className={`${
+                  className={`text-left ${
                     checked
-                      ? "text-primary text-[15px] font-inter font-medium"
-                      : "text-[#4E4E4E] text-[15px] font-inter font-medium"
-                  }`}>
+                      ? "text-primary text-[14px] font-inter font-medium"
+                      : "text-primary text-[14px] font-inter font-medium"
+                  }`}
+                >
                   Accept Terms of Service
                 </span>
               </label>
+              {/* Profile Picture Upload with Preview */}
+              <div className="space-y-4">
+                {/* <label className="block text-lg font-inter font-medium text-gray-700">
+                  Profile Picture {base64String && "✓"}
+                </label> */}
 
-              {/* Upload */}
-              <div
-                onClick={handleClick}
-                className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-10 px-6 text-center cursor-pointer hover:border-primary transition-colors">
-                <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center bg-primary text-white rounded-full">
-                  <FaCloudUploadAlt className="text-2xl" />
-                </div>
-                <p className="text-primary font-normal font-inter mb-1">
-                  Drag & drop or click to{" "}
-                  <span className="underline font-bold">
-                    Upload Profile Picture
-                  </span>{" "}
-                </p>
+                {base64String ? (
+                  // Image Preview Section
+                  <div className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg p-6">
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className="relative">
+                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary shadow-lg">
+                          <Image
+                            src={base64String}
+                            alt="Profile preview"
+                            width={128}
+                            height={128}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        {/* Remove image button */}
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors shadow-lg"
+                          title="Remove image"
+                        >
+                          <IoCloseCircleSharp size={16} />
+                        </button>
+                      </div>
+
+                      <div className="text-center space-y-2">
+                        <p className="text-green-600 font-medium text-sm">
+                          ✓ Image uploaded successfully
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleClick}
+                          className="text-primary hover:text-primary/80 font-medium text-sm underline"
+                        >
+                          Change Profile Picture
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  // Upload Area
+                  <div
+                    onClick={handleClick}
+                    className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-10 px-6 text-center cursor-pointer hover:border-primary/70 transition-colors"
+                  >
+                    <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center bg-primary text-white rounded-full">
+                      <FaCloudUploadAlt className="text-xl" />
+                    </div>
+                    <p className="text-primary font-normal font-inter mb-1">
+                      Drag & drop or click to{" "}
+                      <span className="underline font-bold">
+                        Upload Profile Picture
+                      </span>
+                    </p>
+                    <p className="text-gray-500 text-sm mt-2">
+                      Supports: JPG, PNG, WEBP • Max: 5MB
+                    </p>
+                  </div>
+                )}
+
                 <input
                   title="Upload Profile Picture"
                   ref={fileInputRef}
@@ -240,19 +355,29 @@ export default function VentorRegisterPage({
                 />
               </div>
 
-              {/* Button */}
+              {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-text transition-colors cursor-pointer text-[16px] font-inter flex justify-center">
-                Registration
+                disabled={loading}
+                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-primary/90 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Registation...
+                  </>
+                ) : (
+                  "Registation"
+                )}
               </button>
             </form>
 
-            <p className="text-center text-[16px] text-text font-normal font-inter mt-4">
+            <p className="text-center text-[16px] text-text font-normal font-inter mt-6">
               Already Have an Account?{" "}
               <button
                 onClick={() => setShowModal(true)}
-                className="text-primary cursor-pointer underline font-medium">
+                className="text-primary cursor-pointer underline font-medium hover:text-primary/80"
+              >
                 Log in
               </button>
             </p>
@@ -265,7 +390,7 @@ export default function VentorRegisterPage({
               width={685}
               height={700}
               alt={`${accountType} Illustration`}
-              className="object-cover"
+              className="object-cover w-full h-full min-h-[600px]"
             />
             <div className="absolute bg-[#461500]/60 w-86 text-center h-auto text-white px-6 py-4 rounded-xl">
               <h3 className="text-[24px] font-sans font-semibold">
