@@ -37,7 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [requiresWhatsApp, setRequiresWhatsApp] = useState(false); // Add this
 
   // fetch user data
-<<<<<<< HEAD
 
   // const getUserData = async (userId: string) => {
   //   try {
@@ -51,23 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   //     console.error("Error fetching user:", error);
   //   }
   // };
-=======
-  const getUserData = async (userId: string) => {
-    try {
-      const response = await fetch(`/api/users?id=${userId}`);
-      const data = await response.json();
-      if (data?.user) {
-        setWhatsappNumber(data.user.whatsappNumber);
-        // Update requiresWhatsApp based on actual data
-        if (data.user.role === "vendor" && !data.user.whatsappNumber) {
-          setRequiresWhatsApp(true);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching user:", error);
-    }
-  };
->>>>>>> origin/rezaul
 
   // 🧩 Load user from localStorage on first render
   useEffect(() => {
