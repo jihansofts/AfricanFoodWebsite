@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import LoginModal from "./LoginModel";
 
 interface FoodCardProps {
   datas: Product[];
@@ -19,8 +20,8 @@ export default function FoodCard({
   titleorange,
 }: FoodCardProps) {
   const { user } = useAuth();
-  console.log("user", user?.role);
   const [page, setPage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const [slideDirection, setSlideDirection] = useState<
     "left" | "right" | "none"
   >("none");
@@ -72,7 +73,8 @@ export default function FoodCard({
                 isPrevDisabled
                   ? "opacity-50 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}>
+              }`}
+            >
               <IoIosArrowBack className="size-5" />
             </button>
 
@@ -88,7 +90,8 @@ export default function FoodCard({
                 isNextDisabled
                   ? "opacity-50 cursor-not-allowed border-primary text-primary"
                   : "cursor-pointer border-primary text-white bg-primary hover:bg-primary/90"
-              }`}>
+              }`}
+            >
               <IoIosArrowForward className="size-5" />
             </button>
           </div>
@@ -103,12 +106,14 @@ export default function FoodCard({
               ? "-translate-x-4 opacity-0"
               : "translate-x-0 opacity-100"
           }`}
-          onTransitionEnd={() => setSlideDirection("none")}>
+          onTransitionEnd={() => setSlideDirection("none")}
+        >
           {currentDatas.map((product) => {
             return (
               <div
                 key={product._id}
-                className="bg-[#F7F7F7] rounded-3xl px-6 py-6 flex flex-col items-center justify-center">
+                className="bg-[#F7F7F7] rounded-3xl px-6 py-6 flex flex-col items-center justify-center"
+              >
                 <div className="w-full h-[250px] relative mb-4">
                   <Image
                     fill
@@ -136,6 +141,15 @@ export default function FoodCard({
                   <span className="text-primary lg:text-[28px] md:text-[24px] text-[20px] font-bold font-sans">
                     ${product.price.toFixed(2)} CAD
                   </span>
+                  {!user && (
+                    <button
+                      className="lg:py-4 md:py-3 py-2 lg:px-8 md:px-4 px-4 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition"
+                      onClick={() => setShowModal(true)}
+                    >
+                      Vendor Contact
+                    </button>
+                  )}
+
                   {user && product?.vendor?.whatsappNumber && (
                     <Link
                       href={`https://wa.me/${product.vendor.whatsappNumber.replace(
@@ -146,7 +160,8 @@ export default function FoodCard({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="lg:py-4 md:py-3 py-2 lg:px-8 md:px-4 px-4 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition">
+                      className="lg:py-4 md:py-3 py-2 lg:px-8 md:px-4 px-4 border-2 border-primary font-semibold text-primary rounded-full 2xl:text-[18px] lg:text-[16px] md:text-[14px] text-[14px] font-inter cursor-pointer hover:bg-primary hover:text-white transition"
+                    >
                       Vendor Contact
                     </Link>
                   )}
@@ -156,6 +171,7 @@ export default function FoodCard({
           })}
         </div>
       </div>
+      <LoginModal showModal={showModal} setShowModal={setShowModal} />
     </div>
   );
 }

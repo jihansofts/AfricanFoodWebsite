@@ -185,7 +185,7 @@ export default function LoginModal({
                 <p className="text-center text-gray-500 text-sm">
                   Don&apos;t have an account?{" "}
                   <Link
-                    href={"/join-our-vendor"}
+                    href={"/join-platform"}
                     onClick={() => setShowModal(false)}
                     className="text-primary/90 hover:text-primary font-semibold underline underline-offset-2 transition-colors cursor-pointer"
                   >
