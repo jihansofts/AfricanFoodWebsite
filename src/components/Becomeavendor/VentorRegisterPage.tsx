@@ -4,9 +4,7 @@ import { MdDone } from "react-icons/md";
 import Image from "next/image";
 import InputBox from "@/common/InputBox";
 import { FaCloudUploadAlt } from "react-icons/fa";
-// import Link from "next/link";
 import Swal from "sweetalert2";
-// import { signIn } from "next-auth/react";
 
 // Mapping account type to image, label, button text, and button URL
 const accountData = {
@@ -45,11 +43,6 @@ export default function VentorRegisterPage({
   const handleClick = () => {
     fileInputRef.current?.click();
   };
-  // const handleGoogleSignIn = () => {
-  //   const role = accountType === "vendor" ? "vendor" : "customer";
-  //   const callbackUrl = `${window.location.origin}/?role=${role}`;
-  //   signIn("google", { callbackUrl });
-  // };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -161,21 +154,6 @@ export default function VentorRegisterPage({
                 </label>
               ))}
             </div>
-
-              {/* Google Sing Up Button */}
-            {/* <div className="space-y-8">
-              <button
-                onClick={handleGoogleSignIn}
-                className="w-full border  border-[#E7E7E7] rounded-[10px] px-4 py-3 my-4 font-semibold hover:bg-gray-100 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center gap-2">
-                <Image
-                  src="/images/google.png"
-                  alt="Google Icon"
-                  width={20}
-                  height={20}
-                />
-                Sign Up with Google
-              </button>
-            </div> */}
 
             {/* Form */}
             <form className="space-y-8" onSubmit={handleSubmit}>

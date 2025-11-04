@@ -30,24 +30,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
   // fetch user data
 
-  // const getUserData = async (userId: string) => {
-  //   try {
-  //     const response = await fetch(`/api/users?id=${userId}`);
-  //     const data = await response.json();
-  //     if (data?.user) {
-  //       setUser(data.user);
-  //       setUserLimit(data.user.productLimit);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //   }
-  // };
+  const getUserData = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/users?id=${userId}`);
+      const data = await response.json();
+      if (data?.user) {
+        setWhatsappNumber(data.user.whatsappNumber);
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
 
   // 🧩 Load user from localStorage on first render
 
@@ -56,6 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
+
+      if (parsedUser.role === "vendor") {
+        getUserData(parsedUser.id!);
+      }
 
       // Show WhatsApp modal if vendor missing number
       if (parsedUser.role === "vendor" && !parsedUser.whatsappNumber) {
