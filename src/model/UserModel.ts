@@ -3,6 +3,11 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export type UserRole = "vendor" | "customer";
 export type PackageType = "free" | "standard" | "premium" | "enterprise";
 
+export interface IVendor extends Document {
+  email?: string;
+  phone?: string;
+  whatsappNumber?: string;
+}
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -10,9 +15,14 @@ export interface IUser extends Document {
   role: UserRole;
   profileImage?: string;
   packaged: PackageType;
-  whatsappNumber?: string;
+  vendor?: IVendor;
   productLimit: number;
 }
+const VendorSchema = new Schema<IVendor>({
+  email: { type: String, required: true, unique: true },
+  phone: { type: String, required: true, unique: true },
+  whatsappNumber: { type: String, required: true, unique: true },
+});
 
 const userSchema = new Schema<IUser>(
   {
@@ -27,7 +37,7 @@ const userSchema = new Schema<IUser>(
     role: { type: String, enum: ["vendor", "customer"], default: "customer" },
     profileImage: { type: String },
     productLimit: { type: Number, default: 3 },
-    whatsappNumber: { type: String },
+    vendor: VendorSchema,
   },
   { timestamps: true, versionKey: false }
 );

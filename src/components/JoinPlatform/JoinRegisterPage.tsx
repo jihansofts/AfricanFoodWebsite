@@ -188,8 +188,7 @@ export default function RegisterPage({
               {["customer", "vendor"].map((type) => (
                 <label
                   key={type}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
+                  className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     value={type}
@@ -205,8 +204,7 @@ export default function RegisterPage({
                       accountType === type
                         ? "bg-primary border-primary text-white"
                         : "border-[#4E4E4E] bg-white text-transparent"
-                    }`}
-                  >
+                    }`}>
                     <MdDone />
                   </span>
 
@@ -215,8 +213,7 @@ export default function RegisterPage({
                       accountType === type
                         ? "text-primary text-[15px] font-inter font-medium"
                         : "text-[#4E4E4E] text-[15px] font-inter font-medium"
-                    }`}
-                  >
+                    }`}>
                     Become A {type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
                 </label>
@@ -288,8 +285,7 @@ export default function RegisterPage({
                     checked
                       ? "bg-primary border-primary text-white"
                       : "border-[#4E4E4E] bg-white text-transparent"
-                  }`}
-                >
+                  }`}>
                   <MdDone />
                 </span>
 
@@ -298,8 +294,7 @@ export default function RegisterPage({
                     checked
                       ? "text-primary text-[14px] font-inter font-medium"
                       : "text-primary text-[14px] font-inter font-medium"
-                  }`}
-                >
+                  }`}>
                   Accept Terms of Service
                 </span>
               </label>
@@ -323,10 +318,10 @@ export default function RegisterPage({
                         />
                         {/* Remove image button */}
                         <button
+                          title="button"
                           type="button"
                           onClick={removeImage}
-                          className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
-                        >
+                          className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors">
                           <IoCloseCircleSharp size={16} />
                         </button>
                       </div>
@@ -334,8 +329,7 @@ export default function RegisterPage({
                         <button
                           type="button"
                           onClick={handleClick}
-                          className="text-primary hover:text-primary/80 font-medium text-sm underline"
-                        >
+                          className="text-primary hover:text-primary/80 font-medium text-sm underline">
                           Change Image
                         </button>
                       </div>
@@ -345,8 +339,7 @@ export default function RegisterPage({
                   // Upload Area
                   <div
                     onClick={handleClick}
-                    className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-8 px-6 text-center cursor-pointer hover:border-primary/70 transition-colors"
-                  >
+                    className="border-2 border-dashed border-primary bg-[#FFF7F4] rounded-lg py-8 px-6 text-center cursor-pointer hover:border-primary/70 transition-colors">
                     <div className="mx-auto w-12 h-12 mb-4 flex items-center justify-center bg-primary text-white rounded-full">
                       <FaCloudUploadAlt className="text-xl" />
                     </div>
@@ -376,8 +369,7 @@ export default function RegisterPage({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-primary/90 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                className="w-full bg-primary text-white py-3 rounded-2xl font-semibold hover:bg-primary/90 transition-colors cursor-pointer text-[16px] font-inter flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -394,8 +386,7 @@ export default function RegisterPage({
               Already Have an Account?{" "}
               <button
                 onClick={() => setShowModal(true)}
-                className="text-primary cursor-pointer underline font-medium hover:text-primary/80"
-              >
+                className="text-primary cursor-pointer underline font-medium hover:text-primary/80">
                 Log in
               </button>
             </p>
