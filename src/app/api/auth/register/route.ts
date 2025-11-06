@@ -5,8 +5,15 @@ import UserModel from "@/model/UserModel";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role, profileImage, whatsappNumber } =
-      await req.json();
+    const {
+      name,
+      email,
+      password,
+      role,
+      profileImage,
+      contactInfo,
+      contactType,
+    } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -34,8 +41,10 @@ export async function POST(req: Request) {
       role: role || "customer",
       profileImage,
       productLimit: 3,
-      whatsappNumber: whatsappNumber || null,
+      contactInfo,
+      contactType: contactType || "whatsapp",
     });
+    console.log("New user registered:", newUser);
     return NextResponse.json(
       {
         message: "User registered successfully",
