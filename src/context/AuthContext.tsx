@@ -38,18 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // fetch user data
 
-  const getUserData = async (userId: string) => {
-    try {
-      const response = await fetch(`/api/users?id=${userId}`);
-      const data = await response.json();
-      if (data?.user) {
-        setUser(data.user);
-        // setUserLimit(data.user.productLimit);
-      }
-    } catch (error) {
-      console.error("Error fetching user:", error);
-    }
-  };
+  // const getUserData = async (userId: string) => {
+  //   try {
+  //     const response = await fetch(`/api/users?id=${userId}`);
+  //     const data = await response.json();
+  //     if (data?.user) {
+  //       setUser(data.user);
+  //       // setUserLimit(data.user.productLimit);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching user:", error);
+  //   }
+  // };
 
   // 🧩 Load user from localStorage on first render
   useEffect(() => {
@@ -123,8 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         loading,
         requiresWhatsApp,
-      }}
-    >
+      }}>
       {children}
       {user?.role === "vendor" && requiresWhatsApp && (
         <WhatsappModal
