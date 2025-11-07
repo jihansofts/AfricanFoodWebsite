@@ -15,7 +15,7 @@ type User = {
   email: string;
   role: string;
   image?: string;
-  whatsappNumber?: string;
+  contactInfo?: string;
   productLimit?: number;
 };
 
@@ -38,18 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // fetch user data
 
-  // const getUserData = async (userId: string) => {
-  //   try {
-  //     const response = await fetch(`/api/users?id=${userId}`);
-  //     const data = await response.json();
-  //     if (data?.user) {
-  //       setUser(data.user);
-  //       setUserLimit(data.user.productLimit);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //   }
-  // };
+  const getUserData = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/users?id=${userId}`);
+      const data = await response.json();
+      if (data?.user) {
+        setUser(data.user);
+        // setUserLimit(data.user.productLimit);
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
 
   // 🧩 Load user from localStorage on first render
   useEffect(() => {
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(parsedUser);
 
       // Show WhatsApp modal if vendor missing number
-      if (parsedUser.role === "vendor" && !parsedUser.whatsappNumber) {
+      if (parsedUser.role === "vendor" && !parsedUser.contactInfo) {
         setShowModal(true);
         setRequiresWhatsApp(true); // Set requirement
       }
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("role", userData.role);
     setUser(userData);
 
-    if (userData.role === "vendor" && !userData.whatsappNumber) {
+    if (userData.role === "vendor" && !userData.contactInfo) {
       setShowModal(true);
       setRequiresWhatsApp(true); // Set requirement
     } else {
@@ -95,13 +95,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // ✅ Update after WhatsApp number saved
-  const handleSaved = (newNumber: string) => {
+  const handleSaved = (newNumber: string, contactType: string) => {
     if (user) {
-      const updated = { ...user, whatsappNumber: newNumber };
+      const updated = {
+        ...user,
+        contactInfo: newNumber,
+        contactType: contactType,
+      };
       setUser(updated);
       localStorage.setItem("user", JSON.stringify(updated));
       setShowModal(false);
-      setRequiresWhatsApp(false); // Clear requirement after saving
+      setRequiresWhatsApp(false);
     }
   };
 

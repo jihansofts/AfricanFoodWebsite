@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import UserModel from "@/model/UserModel";
 
 export async function POST(req: Request) {
+  console.log("body", req.body);
   try {
     const {
       name,
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
       role: role || "customer",
       profileImage,
       productLimit: 3,
-      contactInfo,
+      contactInfo: contactInfo || "",
       contactType: contactType || "whatsapp",
     });
     return NextResponse.json(
