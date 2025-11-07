@@ -10,8 +10,8 @@ export interface IUser extends Document {
   role: UserRole;
   profileImage?: string;
   packaged: PackageType;
-  contactInfo: string;
-  contactType: "whatsapp" | "email" | "phone";
+  contactInfo?: string;
+  contactType?: "whatsapp" | "email" | "phone";
   productLimit: number;
 }
 

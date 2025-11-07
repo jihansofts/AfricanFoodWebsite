@@ -56,7 +56,7 @@ export default function FoodCard({
   };
 
   if (datas.length === 0) return null;
-
+  console.log("prodict data ", datas);
   return (
     <div className="mt-10">
       <div className="flex items-center justify-between mb-6">
