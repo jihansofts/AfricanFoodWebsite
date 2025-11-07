@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     if (vendorIdsToFetch.length > 0) {
       const freshVendors = await UserModel.find(
         { _id: { $in: vendorIdsToFetch } },
-        { whatsappNumber: 1 }
+        { contactType: 1, contactInfo: 1 }
       ).lean();
 
       // Store in cache
