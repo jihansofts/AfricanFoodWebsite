@@ -44,11 +44,19 @@ export async function POST(req: Request) {
       contactInfo,
       contactType: contactType || "whatsapp",
     });
-    console.log("New user registered:", newUser);
     return NextResponse.json(
       {
         message: "User registered successfully",
-        user: { email: newUser.email },
+        user: {
+          id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+          profileImage: newUser.profileImage,
+          productLimit: newUser.productLimit,
+          contactType: newUser.contactType,
+          contactInfo: newUser.contactInfo,
+        },
       },
       { status: 201 }
     );

@@ -48,7 +48,8 @@ export async function POST(req: Request) {
         role: user.role,
         image: user.profileImage,
         productLimit: user.productLimit,
-        whatsappNumber: user.whatsappNumber,
+        contactType: user.contactType,
+        contactInfo: user.contactInfo,
       },
     });
 
