@@ -1,6 +1,11 @@
 export interface IVendor {
   _id: string;
-  whatsappNumber?: string;
+  name: string;
+  email: string;
+  role: string;
+  image?: string;
+  contactInfo?: string;
+  productLimit?: number;
 }
 export interface Product {
   id: number;

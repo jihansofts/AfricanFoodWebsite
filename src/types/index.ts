@@ -1,8 +1,20 @@
 export interface IVendor {
   _id: string;
-  whatsappNumber?: string;
+  contactType?: "whatsapp" | "email" | "phone";
+  contactInfo?: string;
+  whatsappNumber?: string; // optional if you use old data
 }
 
+export interface User {
+  id?: string;
+  name: string;
+  email: string;
+  role: string;
+  image?: string;
+  contactType?: "whatsapp" | "email" | "phone";
+  contactInfo?: string;
+  productLimit?: number;
+}
 export interface Product {
   _id: string;
   name: string;

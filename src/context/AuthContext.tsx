@@ -6,18 +6,8 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-
+import { User } from "@/types/index";
 import WhatsappModal from "@/common/WhatsappModal";
-
-type User = {
-  id?: string;
-  name: string;
-  email: string;
-  role: string;
-  image?: string;
-  contactInfo?: string;
-  productLimit?: number;
-};
 
 type AuthContextType = {
   user: User | null;
@@ -102,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         contactInfo: newNumber,
         contactType: contactType,
       };
-      setUser(updated);
+      setUser(updated as User);
       localStorage.setItem("user", JSON.stringify(updated));
       setShowModal(false);
       setRequiresWhatsApp(false);
