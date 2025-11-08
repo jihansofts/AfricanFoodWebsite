@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { Product } from "@/types";
-import { p } from "framer-motion/client";
+import Swal from "sweetalert2";
 
 interface EmailModalProps {
   show: boolean;
@@ -53,14 +53,14 @@ export default function EmailModal({
 
       const data = await res.json();
       if (res.ok) {
-        alert("✅ Email sent successfully!");
+        Swal.fire("Success", data.message, "success");
         onClose();
       } else {
-        alert("❌ Failed: " + data.message);
+        Swal.fire("Error", data.error, "error");
       }
     } catch (err) {
       console.error(err);
-      alert("Error sending message.");
+      Swal.fire("Error", "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
