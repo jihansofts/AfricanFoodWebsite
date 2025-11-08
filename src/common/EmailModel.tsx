@@ -68,7 +68,7 @@ export default function EmailModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-[90%] max-w-3xl shadow-xl">
+      <div className="bg-white rounded-2xl p-6 w-[90%] max-w-xl shadow-xl">
         <h2 className="text-xl font-semibold mb-4 text-center">
           Contact Vendor about{" "}
           <span className="text-primary">{product?.name}</span>
@@ -80,7 +80,7 @@ export default function EmailModal({
             value={form.name}
             readOnly
             placeholder="Your Name"
-            className="border rounded-md p-2 bg-gray-100 cursor-not-allowed"
+            className="border border-primary rounded-md p-2 bg-gray-100 cursor-not-allowed"
           />
           <input
             type="email"
