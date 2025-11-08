@@ -70,7 +70,7 @@ export default function EmailModal({
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 w-[90%] max-w-xl shadow-xl">
         <h2 className="text-xl font-semibold mb-4 text-center">
-          Contact Vendor about{" "}
+          Pay with Interac-e{" "}
           <span className="text-primary">{product?.name}</span>
         </h2>
 
